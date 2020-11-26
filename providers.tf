@@ -1,3 +1,7 @@
+provider "aws" {
+  region = var.aws_region
+}
+
 provider "digitalocean" {
   token = var.do_token
 }

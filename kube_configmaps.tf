@@ -34,7 +34,7 @@ resource "kubernetes_config_map" "wt-configmap-apex" {
     POSTGRESQL_DATABASE: "argu_staging_2"
     RAILS_MAX_THREADS: "15"
     INT_IP_WHITELIST: "10.244.0.0/16"
-    AWS_REGION: "eu-central-1"
+    AWS_REGION: var.aws_region
   }
 }
 

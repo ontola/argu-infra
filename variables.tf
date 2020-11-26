@@ -5,6 +5,16 @@ locals {
 
 # Infrastructure
 
+variable "aws_region" {
+  type = string
+  default = "eu-central-1"
+}
+
+variable "do_region" {
+  type = string
+  default = "ams3"
+}
+
 variable "letsencrypt_email" {
   type = string
 }

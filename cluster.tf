@@ -11,7 +11,7 @@ locals {
 
 resource "digitalocean_kubernetes_cluster" "k8s-ams3-ontola-apex-1" {
   name = "k8s-ams3-ontola-2"
-  region = "ams3"
+  region = var.do_region
   version = "1.19.3-do.2"
   tags = [
     "argu-staging",
