@@ -6,6 +6,7 @@ variable services {
     container_port  = number
     port            = number
     replicas        = number
+    scrape          = bool
     databases       = list(string)
   }))
 
@@ -16,6 +17,7 @@ variable services {
       container_port = 3000
       port = 3000
       replicas = 1
+      scrape = false
       databases = [
         "elasticsearch",
         "postgresql",
@@ -28,6 +30,7 @@ variable services {
       container_port = 3030
       port = 3030
       replicas = 1
+      scrape = true
       databases = [
         "postgresql",
         "redis",
@@ -39,6 +42,7 @@ variable services {
       container_port = 8080
       port = 80
       replicas = 2
+      scrape = false
       databases = [
         "redis"
       ]
@@ -74,6 +78,8 @@ resource "kubernetes_deployment" "service-deployments" {
           app: var.application_name
           tier: each.key
           component: "server"
+          "prometheus.io/scrape": each.value.scrape
+          "prometheus.io/port": each.value.port
         }
       }
       spec {

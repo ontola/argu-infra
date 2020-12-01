@@ -165,6 +165,18 @@ resource "helm_release" "elasticsearch" {
   cleanup_on_fail = true
 }
 
+
+resource "kubernetes_secret" "prometheus-config" {
+  metadata {
+    name = "prometheus-config"
+    namespace = "default"
+  }
+
+  data = {
+    "prometheus.yml" = file("./config/prometheus.yml")
+  }
+}
+
 resource "helm_release" "prometheus" {
   repository = "https://charts.bitnami.com/bitnami"
   chart = "kube-prometheus"
@@ -173,6 +185,22 @@ resource "helm_release" "prometheus" {
 
   atomic = true
   cleanup_on_fail = true
+  set {
+    name = "prometheus.additionalScrapeConfigsExternal.enabled"
+    value = "true"
+  }
+  set {
+    name = "prometheus.additionalScrapeConfigsExternal.name"
+    value = kubernetes_secret.prometheus-config.metadata[0].name
+  }
+  set {
+    name = "prometheus.additionalScrapeConfigsExternal.key"
+    value = "prometheus.yml"
+  }
+  set {
+    name = "prometheus.enableAdminAPI"
+    value = "true"
+  }
 }
 
 resource "helm_release" "grafana" {
