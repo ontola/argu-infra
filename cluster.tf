@@ -165,7 +165,6 @@ resource "helm_release" "elasticsearch" {
   cleanup_on_fail = true
 }
 
-
 resource "kubernetes_secret" "prometheus-config" {
   metadata {
     name = "prometheus-config"

@@ -4,4 +4,5 @@ locals {
   ver_chart_grafana = "4.0.2"
   ver_chart_nginx_ingress = "3.11.0"
   ver_chart_prometheus = "3.0.1"
+  ver_chart_rabbitmq = "8.2.0"
 }

@@ -1,3 +1,14 @@
+resource "kubernetes_secret" "wt-secret-db-rabbitmq" {
+  metadata {
+    name = "wt-secret-db-rabbitmq"
+  }
+
+  data = {
+    RABBITMQ_ADDRESS = "${helm_release.rabbitmq.name}.${var.app_namespace}.svc.cluster.local"
+    RABBITMQ_URL = "ampq://${kubernetes_secret.rabbitmq-credentials.data.username}:${kubernetes_secret.rabbitmq-credentials.data.rabbitmq-password}@${helm_release.rabbitmq.name}.${var.app_namespace}.svc.cluster.local:${var.env_rabbitmq_port}"
+  }
+}
+
 resource "kubernetes_secret" "wt-secret-db-redis" {
   metadata {
     name = "wt-secret-db-redis"

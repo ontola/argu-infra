@@ -105,6 +105,13 @@ variable "env_postgresql_password" {
   type = string
 }
 
+### Env - Databases - Rabbitmq
+
+variable "env_rabbitmq_port" {
+  type = string
+  default = "5672"
+}
+
 ### Env - Databases - Redis
 
 variable "env_redis_address" {
