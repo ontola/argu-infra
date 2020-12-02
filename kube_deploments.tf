@@ -22,6 +22,7 @@ variable services {
         "elasticsearch",
         "postgresql",
         "redis",
+        "rabbitmq",
       ]
     },
     cache = {
@@ -45,6 +46,32 @@ variable services {
       scrape = false
       databases = [
         "redis"
+      ]
+    },
+    email = {
+      service_name = "email"
+      image_name = "email_service"
+      container_port = 3000
+      port = 3000
+      replicas = 1
+      scrape = false
+      databases = [
+        "postgresql",
+        "redis",
+        "rabbitmq",
+      ]
+    },
+    token = {
+      service_name = "token"
+      image_name = "token_service"
+      container_port = 3000
+      port = 3000
+      replicas = 1
+      scrape = false
+      databases = [
+        "postgresql",
+        "redis",
+        "rabbitmq",
       ]
     },
   }

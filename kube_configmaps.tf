@@ -38,6 +38,28 @@ resource "kubernetes_config_map" "wt-configmap-apex" {
   }
 }
 
+resource "kubernetes_config_map" "wt-configmap-email" {
+  metadata {
+    name = "wt-configmap-email"
+  }
+
+  data = {
+    EMAIL_SERVICE_DATABASE: "email_service"
+    INT_IP_WHITELIST: "10.244.0.0/16"
+  }
+}
+
+resource "kubernetes_config_map" "wt-configmap-token" {
+  metadata {
+    name = "wt-configmap-token"
+  }
+
+  data = {
+    TOKEN_SERVICE_DATABASE: "token_service"
+    INT_IP_WHITELIST: "10.244.0.0/16"
+  }
+}
+
 resource "kubernetes_config_map" "wt-configmap-cache" {
   metadata {
     name = "wt-configmap-cache"

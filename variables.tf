@@ -145,6 +145,10 @@ variable "env_rails_oauth_token" {
   type = string
 }
 
+variable "env_service_token" {
+  type = string
+}
+
 variable "env_service_guest_token" {
   type = string
 }
@@ -197,6 +201,12 @@ variable "env_apex_devise_pepper" {
   type = string
 }
 
+### Env - Secrets - Service specific - email
+
+variable "env_email_bugsnag_key" {
+  type = string
+}
+
 ### Env - Secrets - Service specific - frontend
 
 variable "env_frontend_bugsnag_key" {
@@ -208,5 +218,11 @@ variable "env_frontend_mapbox_username" {
 }
 
 variable "env_frontend_mapbox_key" {
+  type = string
+}
+
+### Env - Secrets - Service specific - token
+
+variable "env_token_bugsnag_key" {
   type = string
 }

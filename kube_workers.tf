@@ -1,14 +1,18 @@
 variable workers {
   description = "Map of kubernetes workers."
-  type = map(object({
+  type = list(object({
+    service         = string
     image_name      = string
+    component       = string
     command         = list(string)
     replicas        = number
     databases       = list(string)
   }))
 
-  default = {
-    apex = {
+  default = [
+    {
+      service = "apex"
+      component = "worker"
       image_name = "apex"
       command = ["bundle", "exec", "sidekiq"]
       replicas = 1
@@ -16,9 +20,12 @@ variable workers {
         "elasticsearch",
         "postgresql",
         "redis",
+        "rabbitmq",
       ]
     },
-    cache = {
+    {
+      service = "cache"
+      component = "worker"
       image_name = "apex-rs"
       command = ["/usr/local/bin/invalidator_redis"]
       replicas = 1
@@ -27,16 +34,52 @@ variable workers {
         "redis",
       ]
     },
-  }
+    {
+      service = "email"
+      component = "worker"
+      image_name = "email_service"
+      command = ["bundle", "exec", "sidekiq"]
+      replicas = 1
+      databases = [
+        "postgresql",
+        "redis",
+        "rabbitmq",
+      ]
+    },
+    {
+      service = "email"
+      component = "subscriber"
+      image_name = "email_service"
+      command = ["bundle", "exec", "rake", "broadcast:subscribe"]
+      replicas = 1
+      databases = [
+        "postgresql",
+        "redis",
+        "rabbitmq",
+      ]
+    },
+    {
+      service = "token"
+      component = "worker"
+      image_name = "token_service"
+      command = ["bundle", "exec", "sidekiq"]
+      replicas = 1
+      databases = [
+        "postgresql",
+        "redis",
+        "rabbitmq",
+      ]
+    },
+  ]
 }
 
 resource "kubernetes_deployment" "worker-deployments" {
-  for_each = var.workers
+  for_each = {for worker in var.workers:  "${worker.service}-${worker.component}" => worker}
 
   metadata {
-    name = "${each.key}-worker-dep"
+    name = "${each.key}-dep"
     annotations = {
-      "service-name": each.key
+      "service-name": each.value.service
     }
   }
 
@@ -47,8 +90,8 @@ resource "kubernetes_deployment" "worker-deployments" {
     selector {
       match_labels = {
         app: var.application_name
-        tier: each.key
-        component: "worker"
+        tier: each.value.service
+        component: each.value.component
       }
     }
 
@@ -56,8 +99,8 @@ resource "kubernetes_deployment" "worker-deployments" {
       metadata {
         labels = {
           app: var.application_name
-          tier: each.key
-          component: "worker"
+          tier: each.value.service
+          component: each.value.component
         }
       }
       spec {
@@ -66,7 +109,7 @@ resource "kubernetes_deployment" "worker-deployments" {
         }
         container {
           name = each.key
-          image = "${var.image_registry}/${var.image_registry_org}/${each.value.image_name}:${try(var.service_image_tag[each.key], var.image_tag)}"
+          image = "${var.image_registry}/${var.image_registry_org}/${each.value.image_name}:${try(var.service_image_tag[each.value.service], var.image_tag)}"
           command = each.value.command
 
           env_from {
@@ -81,12 +124,12 @@ resource "kubernetes_deployment" "worker-deployments" {
           }
           env_from {
             config_map_ref {
-              name = "wt-configmap-${each.key}"
+              name = "wt-configmap-${each.value.service}"
             }
           }
           env_from {
             secret_ref {
-              name = "wt-secret-${each.key}"
+              name = "wt-secret-${each.value.service}"
             }
           }
 

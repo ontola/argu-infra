@@ -1,22 +1,12 @@
-resource "kubernetes_secret" "wt-secret-db-rabbitmq" {
+# Databases
+
+resource "kubernetes_secret" "wt-secret-db-elasticsearch" {
   metadata {
-    name = "wt-secret-db-rabbitmq"
+    name = "wt-secret-db-elasticsearch"
   }
 
   data = {
-    RABBITMQ_ADDRESS = "${helm_release.rabbitmq.name}.${var.app_namespace}.svc.cluster.local"
-    RABBITMQ_URL = "ampq://${kubernetes_secret.rabbitmq-credentials.data.username}:${kubernetes_secret.rabbitmq-credentials.data.rabbitmq-password}@${helm_release.rabbitmq.name}.${var.app_namespace}.svc.cluster.local:${var.env_rabbitmq_port}"
-  }
-}
-
-resource "kubernetes_secret" "wt-secret-db-redis" {
-  metadata {
-    name = "wt-secret-db-redis"
-  }
-
-  data = {
-    REDIS_ADDRESS = var.env_redis_address
-    REDIS_URL = "rediss://${var.env_redis_username}:${var.env_redis_password}@${var.env_redis_address}:${var.env_redis_port}"
+    ELASTICSEARCH_URL = var.env_elasticsearch_url
   }
 }
 
@@ -34,15 +24,29 @@ resource "kubernetes_secret" "wt-secret-db-postgresql" {
   }
 }
 
-resource "kubernetes_secret" "wt-secret-db-elasticsearch" {
+resource "kubernetes_secret" "wt-secret-db-rabbitmq" {
   metadata {
-    name = "wt-secret-db-elasticsearch"
+    name = "wt-secret-db-rabbitmq"
   }
 
   data = {
-    ELASTICSEARCH_URL = var.env_elasticsearch_url
+    RABBITMQ_ADDRESS = "${helm_release.rabbitmq.name}.${var.app_namespace}.svc.cluster.local"
+    RABBITMQ_URL = "amqp://${kubernetes_secret.rabbitmq-credentials.data.username}:${kubernetes_secret.rabbitmq-credentials.data.rabbitmq-password}@${helm_release.rabbitmq.name}.${var.app_namespace}.svc.cluster.local:${var.env_rabbitmq_port}"
   }
 }
+
+resource "kubernetes_secret" "wt-secret-db-redis" {
+  metadata {
+    name = "wt-secret-db-redis"
+  }
+
+  data = {
+    REDIS_ADDRESS = var.env_redis_address
+    REDIS_URL = "rediss://${var.env_redis_username}:${var.env_redis_password}@${var.env_redis_address}:${var.env_redis_port}"
+  }
+}
+
+# Services
 
 resource "kubernetes_secret" "wt-secret-apex" {
   metadata {
@@ -54,6 +58,10 @@ resource "kubernetes_secret" "wt-secret-apex" {
     SECRET_KEY_BASE = var.env_secret_key_base
     SECRET_TOKEN = var.env_secret_token
     JWT_ENCRYPTION_TOKEN = var.env_jwt_encryption_token
+
+    SERVICE_TOKEN = var.env_service_token
+    ARGU_APP_ID = var.env_service_app_id
+    ARGU_APP_SECRET = var.env_service_app_secret
 
     BUGSNAG_KEY = var.env_apex_bugsnag_key
     DEVISE_SECRET = var.env_apex_devise_secret
@@ -81,6 +89,25 @@ resource "kubernetes_secret" "wt-secret-cache" {
   }
 }
 
+resource "kubernetes_secret" "wt-secret-email" {
+  metadata {
+    name = "wt-secret-email"
+  }
+  type = "Opaque"
+
+  data = {
+    SECRET_KEY_BASE = var.env_secret_key_base
+    SECRET_TOKEN = var.env_secret_token
+    JWT_ENCRYPTION_TOKEN = var.env_jwt_encryption_token
+
+    SERVICE_TOKEN = var.env_service_token
+    ARGU_APP_ID = var.env_service_app_id
+    ARGU_APP_SECRET = var.env_service_app_secret
+
+    BUGSNAG_KEY = var.env_email_bugsnag_key
+  }
+}
+
 resource "kubernetes_secret" "wt-secret-frontend" {
   metadata {
     name = "wt-secret-frontend"
@@ -98,5 +125,24 @@ resource "kubernetes_secret" "wt-secret-frontend" {
     LIBRO_CLIENT_SECRET = var.env_service_app_secret
     MAPBOX_USERNAME = var.env_frontend_mapbox_username
     MAPBOX_KEY = var.env_frontend_mapbox_key
+  }
+}
+
+resource "kubernetes_secret" "wt-secret-token" {
+  metadata {
+    name = "wt-secret-token"
+  }
+  type = "Opaque"
+
+  data = {
+    SECRET_KEY_BASE = var.env_secret_key_base
+    SECRET_TOKEN = var.env_secret_token
+    JWT_ENCRYPTION_TOKEN = var.env_jwt_encryption_token
+
+    SERVICE_TOKEN = var.env_service_token
+    ARGU_APP_ID = var.env_service_app_id
+    ARGU_APP_SECRET = var.env_service_app_secret
+
+    BUGSNAG_KEY = var.env_token_bugsnag_key
   }
 }
