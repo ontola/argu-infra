@@ -3,6 +3,13 @@ locals {
   cache_provider_service = "cache"
 }
 
+# Jobs
+
+variable "cache_trigger" {
+  type = string
+  default = "0"
+}
+
 # Infrastructure
 
 variable "aws_region" {
