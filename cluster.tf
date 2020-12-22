@@ -22,7 +22,7 @@ resource "digitalocean_kubernetes_cluster" "k8s-ams3-ontola-apex-1" {
   node_pool {
     name = "pool-gp-curious-cougar"
     size = "g-2vcpu-8gb"
-    node_count = 1
+    node_count = 2
     auto_scale = false
 
     tags = [
