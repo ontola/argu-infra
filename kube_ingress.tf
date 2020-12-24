@@ -1,7 +1,9 @@
 locals {
   ingress_tls_hosts = list(
-    "kube.staging.argu.co",
-    "v6.kube.staging.argu.co",
+    var.base_domain,
+    "v6.${var.base_domain}",
+    "analytics.${var.base_domain}",
+    var.cluster_env != "production" ? local.mailcatcher-domain : var.base_domain,
     "kube.staging.demogemeente.nl",
   )
 }
@@ -124,6 +126,24 @@ resource "kubernetes_ingress" "default-ingress" {
           backend {
             service_name = "frontend"
             service_port = var.services.frontend.port
+          }
+        }
+      }
+    }
+
+    dynamic "rule" {
+      for_each = var.cluster_env != "production" ? [1] : []
+
+      content {
+        host = local.mailcatcher-domain
+
+        http {
+          path {
+            path = "/"
+            backend {
+              service_name = kubernetes_service.service-mailcatcher[0].metadata[0].name
+              service_port = kubernetes_service.service-mailcatcher[0].spec[0].port[0].port
+            }
           }
         }
       }

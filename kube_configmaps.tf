@@ -21,7 +21,7 @@ resource "kubernetes_config_map" "wt-configmap-env" {
 
   data = {
     RAILS_ENV = var.env_rails_env
-    ARGU_API_URL = "http://${kubernetes_service.service-services[local.data_provider_service].metadata[0].name}.${var.app_namespace}.svc.cluster.local:${kubernetes_service.service-services[local.data_provider_service].spec[0].port[0].target_port}"
+    ARGU_API_URL = "http://${kubernetes_service.service-services[local.data_provider_service].metadata[0].name}.${local.app_domain_base}:${kubernetes_service.service-services[local.data_provider_service].spec[0].port[0].target_port}"
   }
 }
 
@@ -44,6 +44,8 @@ resource "kubernetes_config_map" "wt-configmap-email" {
   }
 
   data = {
+    MAIL_ADDRESS: var.cluster_env != "production" ? "${kubernetes_service.service-mailcatcher[0].metadata[0].name}.${local.app_domain_base}" : var.env_generic_email_mail_address
+    MAIL_PORT: var.cluster_env != "production" ? kubernetes_service.service-mailcatcher[0].spec[0].port[1].port : var.env_generic_email_mail_port
     EMAIL_SERVICE_DATABASE: "email_service"
     INT_IP_WHITELIST: "10.244.0.0/16"
   }

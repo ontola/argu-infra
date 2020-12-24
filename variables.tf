@@ -12,6 +12,17 @@ variable "cache_trigger" {
 
 # Infrastructure
 
+variable "cluster_env" {
+  type = string
+  default = "development"
+  description = "The environment the cluster is running, development, staging, or production"
+}
+
+variable "base_domain" {
+  type = string
+  description = "The main domain to mount the service on, also used to mount auxiliary services under"
+}
+
 variable "aws_region" {
   type = string
   default = "eu-central-1"
@@ -90,6 +101,20 @@ variable "service_image_tag" {
 variable "env_rails_env" {
   type = string
   default = "staging"
+}
+
+## Env - Generic
+
+### Env - Generic - Email
+
+variable "env_generic_email_mail_address" {
+  type = string
+  default = ""
+}
+
+variable "env_generic_email_mail_port" {
+  type = string
+  default = ""
 }
 
 ## Env - Databases
@@ -232,4 +257,10 @@ variable "env_frontend_mapbox_key" {
 
 variable "env_token_bugsnag_key" {
   type = string
+}
+
+# Locals
+
+locals {
+  app_domain_base = "${var.app_namespace}.svc.cluster.local"
 }
