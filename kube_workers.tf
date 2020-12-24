@@ -80,6 +80,7 @@ resource "kubernetes_deployment" "worker-deployments" {
     name = "${each.key}-dep"
     annotations = {
       "service-name": each.value.service
+      "reloader.stakater.com/auto": "true"
     }
   }
 

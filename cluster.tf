@@ -211,3 +211,12 @@ resource "helm_release" "grafana" {
   atomic = true
   cleanup_on_fail = true
 }
+
+resource "helm_release" "configmap-reloader" {
+  repository = "https://stakater.github.io/stakater-charts"
+  chart = "reloader"
+  name = "reloader"
+
+  atomic = true
+  cleanup_on_fail = true
+}
