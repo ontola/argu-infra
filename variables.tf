@@ -105,7 +105,17 @@ variable "env_rails_env" {
 
 ## Env - Generic
 
+variable "env_generic_log_level" {
+  type = string
+  default = "info"
+}
+
 ### Env - Generic - Email
+
+variable "env_generic_email_log_level" {
+  type = string
+  default = null
+}
 
 variable "env_generic_email_mail_address" {
   type = string
