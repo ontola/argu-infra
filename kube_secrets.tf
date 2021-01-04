@@ -67,8 +67,12 @@ resource "kubernetes_secret" "wt-secret-apex" {
     DEVISE_SECRET = var.env_apex_devise_secret
     DEVISE_PEPPER = var.env_apex_devise_pepper
     AWS_ID = var.env_service_aws_id
+    AWS_ACCESS_KEY_ID = var.env_service_aws_id
     AWS_KEY = var.env_service_aws_key
+    AWS_SECRET_ACCESS_KEY = var.env_service_aws_key
+    AWS_BUCKET = var.env_service_aws_bucket
     FACEBOOK_KEY = var.env_service_facebook_key
+    NOMINATIM_URL = var.env_service_apex_nominatim_url
   }
 }
 
@@ -82,7 +86,6 @@ resource "kubernetes_secret" "wt-secret-cache" {
     ARGU_APP_ID = var.env_service_app_id
     ARGU_APP_SECRET = var.env_service_app_secret
     JWT_ENCRYPTION_TOKEN = var.env_jwt_encryption_token
-    SERVICE_GUEST_TOKEN = var.env_service_guest_token
     SESSION_SECRET = var.env_secret_key_base
     REDIS_URL = "${kubernetes_secret.wt-secret-db-redis.data.REDIS_URL}/0"
     DATABASE_URL = "${kubernetes_secret.wt-secret-db-postgresql.data.POSTGRESQL_URL}/apex_rs?sslmode=require"
@@ -105,6 +108,8 @@ resource "kubernetes_secret" "wt-secret-email" {
     ARGU_APP_SECRET = var.env_service_app_secret
 
     BUGSNAG_KEY = var.env_email_bugsnag_key
+    MAILJET_KEY = var.env_email_mailjet_key
+    MAILJET_SECRET = var.env_email_mailjet_secret
   }
 }
 
@@ -116,7 +121,6 @@ resource "kubernetes_secret" "wt-secret-frontend" {
 
   data = {
     RAILS_OAUTH_TOKEN = var.env_rails_oauth_token
-    SERVICE_GUEST_TOKEN = var.env_service_guest_token
     SESSION_SECRET = var.env_secret_key_base
     JWT_ENCRYPTION_TOKEN = var.env_jwt_encryption_token
 

@@ -8,6 +8,7 @@ locals {
 variable "cache_trigger" {
   type = string
   default = "0"
+  description = "Increment to trigger the cache clear job"
 }
 
 # Infrastructure
@@ -35,11 +36,6 @@ variable "do_region" {
 
 variable "letsencrypt_email" {
   type = string
-}
-
-variable "system_namespace" {
-  type = string
-  default = "c66-system"
 }
 
 variable "app_namespace" {
@@ -191,10 +187,6 @@ variable "env_service_token" {
   type = string
 }
 
-variable "env_service_guest_token" {
-  type = string
-}
-
 variable "env_secret_key_base" {
   type = string
 }
@@ -223,6 +215,10 @@ variable "env_service_aws_key" {
   type = string
 }
 
+variable "env_service_aws_bucket" {
+  type = string
+}
+
 variable "env_service_facebook_key" {
   type = string
 }
@@ -243,10 +239,28 @@ variable "env_apex_devise_pepper" {
   type = string
 }
 
+variable "env_service_apex_nominatim_url" {
+  type = string
+}
+
+variable "env_service_apex_nominatim_key" {
+  type = string
+}
+
 ### Env - Secrets - Service specific - email
 
 variable "env_email_bugsnag_key" {
   type = string
+}
+
+variable "env_email_mailjet_key" {
+  type = string
+  default = ""
+}
+
+variable "env_email_mailjet_secret" {
+  type = string
+  default = ""
 }
 
 ### Env - Secrets - Service specific - frontend
