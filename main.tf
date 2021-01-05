@@ -5,11 +5,6 @@ terraform {
       version = "~> 3.18.0"
     }
 
-    cloudinit = {
-      source = "hashicorp/cloudinit"
-      version = "~> 2.0.0"
-    }
-
     digitalocean = {
       source = "digitalocean/digitalocean"
       version = "~> 2.2.0"
@@ -38,11 +33,6 @@ terraform {
     tls = {
       source = "hashicorp/tls"
       version = "~> 3.0.0"
-    }
-
-    template = {
-      source = "hashicorp/template"
-      version = "~> 2.2.0"
     }
   }
 

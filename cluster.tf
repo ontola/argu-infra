@@ -31,24 +31,6 @@ resource "digitalocean_kubernetes_cluster" "k8s-ams3-ontola-apex-1" {
   }
 }
 
-data "template_file" "haproxy_userdata" {
-  template = file("${path.module}/config/haproxy_userdata.tpl")
-  vars = {
-    cluster_ipv4 = kubernetes_ingress.default-ingress.load_balancer_ingress[0].ip,
-  }
-}
-
-data "cloudinit_config" "haproxy_userdata" {
-  gzip = false
-  base64_encode = false
-
-  part {
-    content_type = "text/cloud-config"
-    content = data.template_file.haproxy_userdata.rendered
-    filename = "haproxy.cloudconfig"
-  }
-}
-
 resource "tls_private_key" "this" {
   algorithm = "RSA"
   rsa_bits  = 4096
@@ -78,7 +60,9 @@ resource "digitalocean_droplet" "haproxy" {
   ipv6 = true
   monitoring = true
   private_networking = true
-  user_data = data.cloudinit_config.haproxy_userdata.rendered
+  user_data = templatefile("${path.module}/config/haproxy_userdata.tpl", {
+    cluster_ipv4 = kubernetes_ingress.default-ingress.load_balancer_ingress[0].ip
+  })
   ssh_keys = [
     digitalocean_ssh_key.this.fingerprint,
     digitalocean_ssh_key.archer.fingerprint,
