@@ -1,11 +1,26 @@
 locals {
-  ingress_tls_hosts = list(
-    var.base_domain,
-    "v6.${var.base_domain}",
-    "analytics.${var.base_domain}",
-    var.cluster_env != "production" ? local.mailcatcher-domain : var.base_domain,
-    "kube.staging.demogemeente.nl",
+  full_base_and_subdomains = list(
+    local.full_base_domain,
+    "www.${local.full_base_domain}",
+    "analytics.${local.full_base_domain}",
+//    "v6.${local.full_base_domain}",
+    var.cluster_env != "production" ? local.mailcatcher-domain : local.full_base_domain,
   )
+
+  expanded_managed_domains = flatten([
+    for domain in var.managed_domains : [
+      join("", [var.env_domain_prefix, domain]),
+      "www.${join("", [var.env_domain_prefix, domain])}",
+      "analytics.${join("", [var.env_domain_prefix, domain])}",
+    ]
+  ])
+
+  ingress_tls_hosts = distinct(concat(
+    local.full_base_and_subdomains,
+    local.automated_domain_records,
+    local.expanded_managed_domains,
+    var.custom_simple_domains
+  ))
 }
 
 resource "kubernetes_manifest" "letsencrypt-staging-issuer" {
@@ -111,7 +126,8 @@ resource "kubernetes_ingress" "default-ingress" {
     }
 
     rule {
-      host = local.ingress_tls_hosts[0]
+      host = local.full_base_domain
+
       http {
         path {
           path = "/link-lib"

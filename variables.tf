@@ -24,6 +24,30 @@ variable "base_domain" {
   description = "The main domain to mount the service on, also used to mount auxiliary services under"
 }
 
+variable "env_domain_prefix" {
+  type = string
+  default = ""
+  description = "The subdomain the application is mounted on, including dot (eg 'staging.'). Applied to all domains."
+}
+
+variable "automated_domains" {
+  type = list(string)
+  description = "Domains owned by us, managed by the infrastructure. Don't prefix since env_domain_prefix is honored"
+  default = []
+}
+
+variable "managed_domains" {
+  type = list(string)
+  description = "Domains owned by us, managed manually, should have correct DNS settings for all (sub)domains"
+  default = []
+}
+
+variable "custom_simple_domains" {
+  type = list(string)
+  description = "Domains managed by customers, might contain misconfigurations like missing subdomains or wrong A records"
+  default = []
+}
+
 variable "aws_region" {
   type = string
   default = "eu-central-1"
