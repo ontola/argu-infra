@@ -1,0 +1,24 @@
+@startuml
+' Components - high level - overview
+actor user
+cloud internet
+
+folder client {
+    component frontend_client as "Frontend client"
+}
+folder server as "server (kubernetes cluster)" {
+    component frontend_server as "Frontend server\nLibro\nTypescript/Node"
+    component apex as "apex server\nApex\nRuby on Rails"
+    component cache as "Cache server\napex_rs\nRust (actix)"
+    component email as "email server\nemail_service\nRuby on Rails"
+    component token as "token server\ntoken_service\nRuby on Rails"
+}
+
+folder other {
+    component core as "Integration testing,\ndev setup"
+}
+
+user - frontend_client
+frontend_client - internet
+internet - server
+@enduml

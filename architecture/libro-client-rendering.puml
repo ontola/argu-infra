@@ -1,0 +1,56 @@
+@startuml
+'libro - client - rendering
+actor browser
+
+control app as "<App/>"
+collections resource as "<Resource/>"
+control lrs as "LRS"
+entity mapping
+entity store
+boundary api
+
+browser -> app :navigate
+
+activate app
+loop node in tree
+    app -> resource : mount
+    activate resource
+    resource -> lrs : subscribe
+    lrs -> lrs : subscribe
+    resource -> lrs : getStatus
+    lrs --> resource : status
+    alt loaded and valid
+        resource -> lrs : getComponent
+        lrs -> mapping : getRenderComponent
+        mapping -> store : lookup
+        store --> mapping : data
+        mapping -> mapping : lookup
+        mapping --> lrs : Component
+        resource --> app : <Component />
+    else bad status, already queued
+        resource --> app : <LoadingOrError />
+    else not queued
+        resource -> lrs : queueEntity
+        lrs -> lrs : queue
+        lrs -->> browser : Promise<schedule>
+        lrs --> resource : queued
+        resource --> app : <Loading />
+
+    deactivate resource
+end
+app -> app : render
+deactivate app
+
+== queue drain ==
+
+browser -> lrs : Promise<schedule>
+activate lrs
+lrs -> api : getEntities
+api ->> server : bulk request
+server --> api : resources
+api -> store : delta
+store -> store : process
+store -> lrs : changed resources
+lrs --> resource : resource changed
+
+@enduml

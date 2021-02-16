@@ -1,0 +1,73 @@
+@startuml
+' Components - Mid level - Libro
+frame frontend as "Client" {
+    node components [
+        components
+        --
+        Plain reusable react components
+        when @material-ui doesn't suffice
+    ]
+    node middleware [
+        middleware
+        --
+        Adds client-side interactivity
+    ]
+    node ontologies [
+        ontologies
+        --
+        Easily reference IRI's
+    ]
+    node topologies [
+        topology
+        --
+        Shapes a resource can render as
+    ]
+    node themes [
+        themes
+        --
+        Via the @material-ui theme system
+    ]
+    node translations [
+        translations
+        --
+        App-specific
+    ]
+
+    node views {
+        node type [
+            types
+            --
+            Renders classes of resources
+        ]
+        node property [
+            properties
+            --
+            Renders a single property
+        ]
+        node datatype [
+            properties
+            --
+            Renders literal values
+        ]
+    }
+
+    node linkRedux
+
+    node link {
+        component lrs as "LinkedRenderStore"
+        component api as "Data Processor (networking)"
+        component mapping as "Component Store"
+        component store as "RDFStore"
+
+        lrs --> api : api
+        lrs --> mapping : mapping
+        lrs --> store : store
+    }
+
+'Styling
+    topologies --[hidden]> themes
+    themes --[hidden]> views
+    views---> linkRedux
+    linkRedux---> link
+}
+@enduml

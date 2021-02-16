@@ -1,0 +1,56 @@
+@startuml
+' Components - high level - cross-communication
+interface "Bulk API" as bulk
+label styling as " "
+
+folder client {
+    actor user
+    component libroFront as "libro client"
+
+    libroFront -- bulk
+}
+
+folder server {
+    component nginx as "nginx\n(core)"
+    component cache
+    component libro as "libro server"
+    component apex
+    component email
+    component token
+
+    queue redis as "redis: invalidations"
+    queue rabbitmq
+
+    interface "Bulk\nAuthorize" as authorize
+    interface "Bulk\nAPI" as bulkint
+
+    bulk --> nginx
+    authorize - cache
+    apex -> authorize
+}
+
+user -- libroFront
+
+nginx --> libro
+nginx --> cache : bulk api
+nginx -- apex
+nginx -- email
+nginx -- token
+
+libro -- apex : WebManifest
+libro - bulkint : preload
+bulkint --> cache
+
+apex <--> rabbitmq
+apex --> redis : pub
+
+cache <-- redis : sub
+
+email <--> rabbitmq
+token <--> rabbitmq
+
+' Styling
+libro - cache
+email -[hidden] token
+token -[hidden] apex
+@enduml

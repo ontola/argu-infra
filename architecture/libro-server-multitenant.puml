@@ -1,0 +1,39 @@
+@startuml
+' libro - server - multitenant
+actor user
+participant browser
+participant client
+participant server as "libro\nserver"
+participant apex
+participant cache
+
+user -> browser : Go to site
+browser -> server : GET </page>
+
+server -> apex : HEAD </page>
+alt 200 OK
+    apex --> server : 200
+
+    server -> apex : GET </manifest>
+    apex --> server : tenant web manifest
+    server -> cache : bulk <manifest.ontola.resources>
+    cache --> server : resources
+
+    server -> server : render page
+    server --> browser : 200, page
+
+    browser -> server : GET assets
+    server --> browser : assets
+
+    create client
+    browser -> client : boot
+    client -> client : run
+else 307/308 Redirect
+    apex -> server : 307/308, Location: </redirect>
+    server --> browser : 307/308, Location: </redirect>
+    browser -> server : GET </redirect>
+else other <status>
+    apex -> server : <status>
+    server --> browser : <status>, html error page
+end
+@enduml

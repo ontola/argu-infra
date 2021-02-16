@@ -1,0 +1,21 @@
+@startuml
+actor browser
+control generateLRS
+control lrs as "LRS"
+entity store
+entity mapping
+entity schema
+boundary api
+control app as "<App/>"
+collections resource as "<Resource/>"
+
+browser -> generateLRS
+generateLRS -> lrs : create
+lrs -> store **: create
+lrs -> mapping **: create
+lrs -> schema **: create
+lrs -> api **: create
+generateLRS -> app ** : mount
+app -> resource ** : mount
+
+@enduml

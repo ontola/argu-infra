@@ -1,0 +1,34 @@
+@startuml
+' libro - client - lifespan
+
+state booting {
+    state generateLRS : Initialize configuration, middleware, classdata
+    state seeding : Parse and load data in html
+    state mounting : React mount <App />
+}
+state running {
+    state idle
+    state processing : Processing delta
+    state rendering
+    state fetching
+
+    [*] -> rendering
+    rendering -> idle : done
+    idle -> processing : navigate in-site
+    idle -> fetching : test
+    fetching -> processing
+    processing --> rendering
+    processing --> idle
+
+}
+
+[*] --> booting
+booting --> generateLRS : success
+generateLRS --> seeding : success
+generateLRS -> [*] : fail
+seeding -> mounting : success
+seeding --> mounting : fail: force mount
+
+mounting --> running
+running -> [*] : navigate away
+@enduml
