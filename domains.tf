@@ -12,7 +12,7 @@ resource "aws_route53_zone" "this" {
   for_each = local.domains
   delegation_set_id = aws_route53_delegation_set.this.id
 
-  name = each.key
+  name = each.value
 }
 
 resource "aws_route53_record" "apex_a" {
