@@ -92,7 +92,7 @@ resource "helm_release" "nginx-ingress" {
   repository = "https://kubernetes.github.io/ingress-nginx"
   chart = "ingress-nginx"
   name = "ingress-nginx"
-  version = local.ver_chart_nginx_ingress
+  version = var.ver_chart_nginx_ingress
 
   set {
     name = "controller.config.add-headers"
@@ -132,7 +132,7 @@ resource "helm_release" "cert-manager" {
   repository = "https://charts.jetstack.io"
   chart = "cert-manager"
   name = "cert-manager"
-  version = local.ver_chart_cert_manager
+  version = var.ver_chart_cert_manager
 
   set {
     name = "installCRDs"
@@ -144,7 +144,7 @@ resource "helm_release" "elasticsearch" {
   repository = "https://charts.bitnami.com/bitnami"
   chart = "elasticsearch"
   name = "elasticsearch"
-  version = local.ver_chart_elasticsearch
+  version = var.ver_chart_elasticsearch
 
   cleanup_on_fail = true
 }
@@ -164,7 +164,7 @@ resource "helm_release" "prometheus" {
   repository = "https://charts.bitnami.com/bitnami"
   chart = "kube-prometheus"
   name = "prometheus"
-  version = local.ver_chart_prometheus
+  version = var.ver_chart_prometheus
 
   atomic = true
   cleanup_on_fail = true
@@ -190,7 +190,7 @@ resource "helm_release" "grafana" {
   repository = "https://charts.bitnami.com/bitnami"
   chart = "grafana"
   name = "grafana"
-  version = local.ver_chart_grafana
+  version = var.ver_chart_grafana
 
   atomic = true
   cleanup_on_fail = true

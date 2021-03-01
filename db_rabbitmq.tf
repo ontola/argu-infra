@@ -18,7 +18,7 @@ resource "helm_release" "rabbitmq" {
   repository = "https://charts.bitnami.com/bitnami"
   chart = "rabbitmq"
   name = "rabbitmq"
-  version = local.ver_chart_rabbitmq
+  version = var.ver_chart_rabbitmq
 
   cleanup_on_fail = true
   set {

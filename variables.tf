@@ -307,6 +307,15 @@ variable "env_token_bugsnag_key" {
   type = string
 }
 
+# Versions
+
+variable "ver_chart_cert_manager" { type = string }
+variable "ver_chart_elasticsearch" { type = string }
+variable "ver_chart_grafana" { type = string }
+variable "ver_chart_nginx_ingress" { type = string }
+variable "ver_chart_prometheus" { type = string }
+variable "ver_chart_rabbitmq" { type = string }
+
 # Locals
 
 locals {
