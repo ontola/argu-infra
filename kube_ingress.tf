@@ -125,6 +125,24 @@ resource "kubernetes_ingress" "default-ingress" {
       service_port = "80"
     }
 
+    dynamic "rule" {
+      for_each = var.cluster_env != "production" ? [1] : []
+
+      content {
+        host = local.mailcatcher-domain
+
+        http {
+          path {
+            path = "/"
+            backend {
+              service_name = kubernetes_service.service-mailcatcher[0].metadata[0].name
+              service_port = kubernetes_service.service-mailcatcher[0].spec[0].port[0].port
+            }
+          }
+        }
+      }
+    }
+
     rule {
       host = local.full_base_domain
 
@@ -147,23 +165,6 @@ resource "kubernetes_ingress" "default-ingress" {
       }
     }
 
-    dynamic "rule" {
-      for_each = var.cluster_env != "production" ? [1] : []
-
-      content {
-        host = local.mailcatcher-domain
-
-        http {
-          path {
-            path = "/"
-            backend {
-              service_name = kubernetes_service.service-mailcatcher[0].metadata[0].name
-              service_port = kubernetes_service.service-mailcatcher[0].spec[0].port[0].port
-            }
-          }
-        }
-      }
-    }
 
     tls {
       secret_name = "tls"
