@@ -1,0 +1,16 @@
+image: registry.gitlab.com/gitlab-org/release-cli:latest
+
+variables:
+  DOCKER_DRIVER: overlay2
+
+deploy:
+  stage: deploy
+  before_script:
+    - apk add ruby ruby-dev build-base musl-dev
+    - gem install terraform-enterprise-client json
+  script:
+    - export RUN_URL=$(./ci/update_image_tag.rb)
+    - "[[ -z \"$RUN_URL\" ]] && return 1;"
+    - "echo Terraform run: $RUN_URL"
+stages:
+  - deploy
