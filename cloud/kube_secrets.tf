@@ -88,7 +88,7 @@ resource "kubernetes_secret" "wt-secret-cache" {
     JWT_ENCRYPTION_TOKEN = var.env_jwt_encryption_token
     SESSION_SECRET = var.env_secret_key_base
     REDIS_URL = "${kubernetes_secret.wt-secret-db-redis.data.REDIS_URL}/0"
-    DATABASE_URL = "${kubernetes_secret.wt-secret-db-postgresql.data.POSTGRESQL_URL}/apex_rs?sslmode=require"
+    DATABASE_URL = "${kubernetes_secret.wt-secret-db-postgresql.data.POSTGRESQL_URL}/${var.env_cache_postgresql_database}?sslmode=require"
   }
 }
 
