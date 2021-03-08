@@ -67,19 +67,9 @@ variable "app_namespace" {
   default = "default"
 }
 
-variable "cluster_host" {
-  type = string
-}
-
 variable "do_token" {
   type = string
-}
-
-variable "cluster_credentials" {
-  type = object({
-    username = string
-    password = string
-  })
+  description = "Used to manage the cluster and networking infrastructure"
 }
 
 variable "application_name" {
@@ -100,6 +90,7 @@ variable "image_registry_org" {
 
 variable "image_registry_user" {
   type = string
+  description = "Usually from a deploy token"
 }
 
 variable "image_registry_token" {
@@ -304,6 +295,20 @@ variable "env_frontend_mapbox_key" {
 ### Env - Secrets - Service specific - token
 
 variable "env_token_bugsnag_key" {
+  type = string
+}
+
+## Other env - service specific
+
+variable "env_cache_postgresql_database" {
+  type = string
+}
+
+variable "env_email_postgresql_database" {
+  type = string
+}
+
+variable "env_token_postgresql_database" {
   type = string
 }
 
