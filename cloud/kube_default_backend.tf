@@ -31,11 +31,11 @@ resource "kubernetes_deployment" "default-http-backend" {
           name  = "default-http-backend"
 
           resources {
-            requests {
+            requests = {
               cpu    = "10m"
               memory = "20Mi"
             }
-            limits {
+            limits = {
               cpu    = "10m"
               memory = "20Mi"
             }

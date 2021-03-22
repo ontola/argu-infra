@@ -61,7 +61,7 @@ resource "digitalocean_droplet" "haproxy" {
   monitoring = true
   private_networking = true
   user_data = templatefile("${path.module}/config/haproxy_userdata.tpl", {
-    cluster_ipv4 = kubernetes_ingress.default-ingress.load_balancer_ingress[0].ip
+    cluster_ipv4 = kubernetes_ingress.default-ingress.status[0].load_balancer[0].ingress[0].ip
   })
   ssh_keys = [
     digitalocean_ssh_key.this.fingerprint,

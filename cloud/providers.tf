@@ -7,8 +7,6 @@ provider "digitalocean" {
 }
 
 provider "kubernetes" {
-  load_config_file = "false"
-
   host = digitalocean_kubernetes_cluster.k8s-ams3-ontola-apex-1.endpoint
 
   token = digitalocean_kubernetes_cluster.k8s-ams3-ontola-apex-1.kube_config[0].token
@@ -28,8 +26,6 @@ provider "kubernetes-alpha" {
 
 provider "helm" {
   kubernetes {
-    load_config_file = "false"
-
     host = digitalocean_kubernetes_cluster.k8s-ams3-ontola-apex-1.endpoint
 
     token = digitalocean_kubernetes_cluster.k8s-ams3-ontola-apex-1.kube_config[0].token
