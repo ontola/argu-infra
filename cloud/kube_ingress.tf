@@ -2,23 +2,42 @@ locals {
   full_base_and_subdomains = list(
     local.full_base_domain,
     "www.${local.full_base_domain}",
-    "analytics.${local.full_base_domain}",
 //    "v6.${local.full_base_domain}",
-    var.cluster_env != "production" ? local.mailcatcher-domain : local.full_base_domain,
   )
 
   expanded_managed_domains = flatten([
     for domain in var.managed_domains : [
       join("", [var.env_domain_prefix, domain]),
       "www.${join("", [var.env_domain_prefix, domain])}",
-      "analytics.${join("", [var.env_domain_prefix, domain])}",
     ]
   ])
+
+  analytics_domains = flatten(concat(
+    ["analytics.${local.full_base_domain}"],
+    [for domain in var.managed_domains : "analytics.${join("", [var.env_domain_prefix, domain])}"],
+  ))
+
+  mailcatcher_domains = var.cluster_env != "production" ? (
+      compact(list(
+        local.mailcatcher-domain,
+      ))
+    ) : (
+      []
+    )
+
+  website_domains = distinct(concat(
+    local.full_base_and_subdomains,
+    local.automated_domain_records,
+    local.expanded_managed_domains,
+    var.custom_simple_domains,
+  ))
 
   ingress_tls_hosts = distinct(concat(
     local.full_base_and_subdomains,
     local.automated_domain_records,
     local.expanded_managed_domains,
+    local.analytics_domains,
+    local.mailcatcher_domains,
     var.custom_simple_domains
   ))
 }
@@ -115,7 +134,7 @@ resource "kubernetes_ingress" "default-ingress" {
       "service.beta.kubernetes.io/do-loadbalancer-healthcheck-path": kubernetes_deployment.default-http-backend.spec[0].template[0].spec[0].container[0].liveness_probe[0].http_get[0].path
       "service.beta.kubernetes.io/do-loadbalancer-healthcheck-protocol": "http"
       "service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol": "true"
-      "nginx.ingress.kubernetes.io/server-alias": join(",", local.ingress_tls_hosts)
+      "nginx.ingress.kubernetes.io/server-alias": join(",", local.website_domains)
     }
   }
 
@@ -126,10 +145,10 @@ resource "kubernetes_ingress" "default-ingress" {
     }
 
     dynamic "rule" {
-      for_each = var.cluster_env != "production" ? [1] : []
+      for_each = toset(local.mailcatcher_domains)
 
       content {
-        host = local.mailcatcher-domain
+        host = rule.value
 
         http {
           path {
@@ -143,23 +162,27 @@ resource "kubernetes_ingress" "default-ingress" {
       }
     }
 
-    rule {
-      host = local.full_base_domain
+    dynamic "rule" {
+      for_each = local.website_domains
 
-      http {
-        path {
-          path = "/link-lib"
-          backend {
-            service_name = kubernetes_service.service-services[local.cache_provider_service].metadata[0].name
-            service_port = var.services.cache.port
+      content {
+        host = rule.value
+
+        http {
+          path {
+            path = "/link-lib"
+            backend {
+              service_name = kubernetes_service.service-services[local.cache_provider_service].metadata[0].name
+              service_port = var.services.cache.port
+            }
           }
-        }
 
-        path {
-          path = "/"
-          backend {
-            service_name = "frontend"
-            service_port = var.services.frontend.port
+          path {
+            path = "/"
+            backend {
+              service_name = "frontend"
+              service_port = var.services.frontend.port
+            }
           }
         }
       }
