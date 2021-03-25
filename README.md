@@ -1,5 +1,10 @@
 # Infra
 
+## Overview
+- **architecture** - Diagrams of various components of the system
+- **bin** - Scripts for common kubernetes tasks
+- **cloud** - Terraform infrastructure descriptions
+
 ## Setup
 - Install the [editor plugin](https://plugins.jetbrains.com/plugin/7808-hashicorp-terraform--hcl-language-support)
 

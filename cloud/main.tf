@@ -41,7 +41,7 @@ terraform {
     organization = "ontola"
 
     workspaces {
-      name = "ontola-staging"
+      prefix = "ontola-"
     }
   }
 }
