@@ -75,6 +75,10 @@ resource "kubernetes_manifest" "letsencrypt-staging-issuer" {
       }
     }
   }
+
+  depends_on = [
+    helm_release.cert-manager
+  ]
 }
 
 resource "kubernetes_manifest" "letsencrypt-prod-issuer" {
@@ -110,6 +114,10 @@ resource "kubernetes_manifest" "letsencrypt-prod-issuer" {
       }
     }
   }
+
+  depends_on = [
+    helm_release.cert-manager
+  ]
 }
 
 resource "kubernetes_config_map" "custom-headers" {
