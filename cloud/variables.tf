@@ -62,6 +62,11 @@ variable "letsencrypt_email" {
   type = string
 }
 
+variable "letsencrypt_env_production" {
+  type = bool
+  default = false
+}
+
 variable "app_namespace" {
   type = string
   default = "default"
