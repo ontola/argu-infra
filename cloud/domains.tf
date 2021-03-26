@@ -3,7 +3,7 @@ locals {
   full_base_domain = join("", [var.env_domain_prefix, var.base_domain])
 
   # Map of zone names to prefixed names
-  domains = { for domain in var.automated_domains: domain =>  "${var.env_domain_prefix}${domain}" }
+  domains = var.cluster_env != "staging" ? {} : { for domain in var.automated_domains: domain =>  "${var.env_domain_prefix}${domain}" }
 }
 
 resource "aws_route53_delegation_set" "this" {}

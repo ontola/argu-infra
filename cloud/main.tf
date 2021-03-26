@@ -46,6 +46,19 @@ terraform {
   }
 }
 
+data "terraform_remote_state" "shared" {
+  backend = "remote"
+
+  config = {
+    hostname = "app.terraform.io"
+    organization = "ontola"
+
+    workspaces = {
+      name = "shared"
+    }
+  }
+}
+
 resource "random_pet" "tfc_refresh" {
   keepers = {
     refresh : 1

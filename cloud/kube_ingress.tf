@@ -40,9 +40,17 @@ locals {
     local.mailcatcher_domains,
     var.custom_simple_domains
   ))
+
+  used_issuer = (var.letsencrypt_issuers == true
+    ? (var.letsencrypt_env_production == true
+      ? kubernetes_manifest.letsencrypt-prod-issuer[0].manifest.metadata.name
+      : kubernetes_manifest.letsencrypt-staging-issuer[0].manifest.metadata.name)
+    : "")
 }
 
 resource "kubernetes_manifest" "letsencrypt-staging-issuer" {
+  count = var.letsencrypt_issuers == true ? 1 : 0
+
   provider = kubernetes-alpha
 
   manifest = {
@@ -62,6 +70,7 @@ resource "kubernetes_manifest" "letsencrypt-staging-issuer" {
           # Secret resource that will be used to store the account's private key.
           name = "letsencrypt-staging-account-key"
         }
+
         # Add a single challenge solver, HTTP01 using nginx
         solvers = [
           {
@@ -77,11 +86,14 @@ resource "kubernetes_manifest" "letsencrypt-staging-issuer" {
   }
 
   depends_on = [
-    helm_release.cert-manager
+    digitalocean_kubernetes_cluster.k8s-ams3-ontola-apex-1,
+    helm_release.cert-manager,
   ]
 }
 
 resource "kubernetes_manifest" "letsencrypt-prod-issuer" {
+  count = var.letsencrypt_issuers == true ? 1 : 0
+
   provider = kubernetes-alpha
 
   manifest = {
@@ -116,6 +128,7 @@ resource "kubernetes_manifest" "letsencrypt-prod-issuer" {
   }
 
   depends_on = [
+    digitalocean_kubernetes_cluster.k8s-ams3-ontola-apex-1,
     helm_release.cert-manager
   ]
 }
@@ -137,7 +150,7 @@ resource "kubernetes_ingress" "default-ingress" {
   metadata {
     name = "default-ingress"
     annotations = {
-      "cert-manager.io/cluster-issuer": var.letsencrypt_env_production == true ? kubernetes_manifest.letsencrypt-prod-issuer.manifest.metadata.name : kubernetes_manifest.letsencrypt-staging-issuer.manifest.metadata.name
+      "cert-manager.io/cluster-issuer": local.used_issuer
       "acme.cert-manager.io/http01-edit-in-place": "true"
       "service.beta.kubernetes.io/do-loadbalancer-healthcheck-path": kubernetes_deployment.default-http-backend.spec[0].template[0].spec[0].container[0].liveness_probe[0].http_get[0].path
       "service.beta.kubernetes.io/do-loadbalancer-healthcheck-protocol": "http"

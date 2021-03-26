@@ -13,6 +13,17 @@ variable "cache_trigger" {
 
 # Infrastructure
 
+variable "organization" {
+  type = string
+  default = "ontola"
+}
+
+variable "cluster_version" {
+  type = number
+  default = 0
+  description = "Increment to create a new cluster"
+}
+
 variable "cluster_env" {
   type = string
   default = "development"
@@ -65,6 +76,11 @@ variable "letsencrypt_email" {
 variable "letsencrypt_env_production" {
   type = bool
   default = false
+}
+
+variable "letsencrypt_issuers" {
+  type = bool
+  default = true
 }
 
 variable "app_namespace" {
@@ -305,6 +321,10 @@ variable "env_token_bugsnag_key" {
 
 ## Other env - service specific
 
+variable "env_apex_postgresql_database" {
+  type = string
+}
+
 variable "env_cache_postgresql_database" {
   type = string
 }
@@ -322,7 +342,10 @@ variable "env_token_postgresql_database" {
 variable "ver_chart_cert_manager" { type = string }
 variable "ver_chart_elasticsearch" { type = string }
 variable "ver_chart_grafana" { type = string }
-variable "ver_chart_nginx_ingress" { type = string }
+variable "ver_chart_nginx_ingress" {
+  description = "https://github.com/kubernetes/ingress-nginx/blob/master/charts/ingress-nginx/CHANGELOG.md"
+  type = string
+}
 variable "ver_chart_prometheus" { type = string }
 variable "ver_chart_rabbitmq" { type = string }
 
@@ -331,3 +354,16 @@ variable "ver_chart_rabbitmq" { type = string }
 locals {
   app_domain_base = "${var.app_namespace}.svc.cluster.local"
 }
+
+//variable "env_mysql_address" { type = "string" }
+//variable "env_mysql_port" { type = "string" }
+//variable "env_mysql_database" { type = "string" }
+//variable "env_mysql_matomo_username" { type = "string" }
+//variable "env_mysql_matomo_password" { type = "string" }
+//variable "env_mysql_admin_username" { type = "string" }
+//variable "env_mysql_admin_password" { type = "string" }
+//variable "oauth2_proxy_client_id" { type="string" }
+//variable "oauth2_proxy_client_secret" { type="string" }
+//variable "oauth2_proxy_cookie_secret" { type="string" }
+//variable "env_generic_matomo_general_salt" { type="string" }
+//variable "env_generic_matomo_tables_prefix" { type="string" }
