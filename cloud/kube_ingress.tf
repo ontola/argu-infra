@@ -156,6 +156,7 @@ resource "kubernetes_ingress" "default-ingress" {
       "service.beta.kubernetes.io/do-loadbalancer-healthcheck-protocol": "http"
       "service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol": "true"
       "nginx.ingress.kubernetes.io/server-alias": join(",", local.website_domains)
+      "nginx.ingress.kubernetes.io/whitelist-source-range": var.ip_whitelist
     }
   }
 

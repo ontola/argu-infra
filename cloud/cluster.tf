@@ -124,6 +124,10 @@ resource "helm_release" "nginx-ingress" {
     name = "controller.config.proxy-body-size"
     value = "250m"
   }
+  set {
+    name = "controller.config.use-proxy-protocol"
+    value = true
+  }
 }
 
 resource "helm_release" "cert-manager" {

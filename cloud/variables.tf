@@ -30,6 +30,12 @@ variable "cluster_env" {
   description = "The environment the cluster is running, development, staging, or production"
 }
 
+variable "ip_whitelist" {
+  type = string
+  default = "0.0.0.0/0"
+  description = "Range of allowed IP addresses"
+}
+
 variable "base_domain" {
   type = string
   description = "The main domain to mount the service on, also used to mount auxiliary services under"
