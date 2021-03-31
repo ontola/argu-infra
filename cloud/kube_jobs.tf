@@ -65,6 +65,11 @@ resource "kubernetes_job" "clear-cache" {
               name = "wt-secret-db-redis"
             }
           }
+          env_from {
+            secret_ref {
+              name = "wt-secret-db-postgresql"
+            }
+          }
         }
         restart_policy = "Never"
       }
@@ -128,6 +133,11 @@ resource "kubernetes_job" "migrate-apex" {
           env_from {
             secret_ref {
               name = "wt-secret-db-redis"
+            }
+          }
+          env_from {
+            secret_ref {
+              name = "wt-secret-db-postgresql"
             }
           }
         }
