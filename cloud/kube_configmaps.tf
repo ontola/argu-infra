@@ -83,3 +83,28 @@ resource "kubernetes_config_map" "wt-configmap-frontend" {
     name = "wt-configmap-frontend"
   }
 }
+
+resource "kubernetes_config_map" "wt-configmap-matomo" {
+  metadata {
+    name = "wt-configmap-matomo"
+  }
+
+  data = {
+    MYSQL_DATABASE = var.env_matomo_mysql_database
+    MATOMO_DATABASE_TABLES_PREFIX = var.env_generic_matomo_database_tables_prefix
+    MATOMO_DATABASE_ADAPTER = var.env_generic_matomo_database_adapter
+    MATOMO_DATABASE_ENABLE_SSL = var.env_generic_matomo_database_enable_ssl
+    MATOMO_GENERAL_NOREPLY_EMAIL_ADDRESS = var.env_generic_matomo_noreply_address
+    MATOMO_GENERAL_NOREPLY_EMAIL_NAME = var.env_generic_matomo_noreply_name
+    MATOMO_HOST = coalesce(var.env_generic_matomo_host, "${var.analytics_subdomain}.${var.base_domain}")
+    MATOMO_MAIL_DEFAULTHOSTNAMEIFEMPTY = coalesce(var.env_generic_matomo_defaulthostnameifempty, "mj.${var.base_domain}")
+    MATOMO_MAIL_ENCRYPTION = var.env_generic_matomo_mail_encryption
+    MATOMO_MAIL_HOST = var.env_generic_matomo_mail_host
+    MATOMO_MAIL_PORT = var.env_generic_matomo_mail_port
+    MATOMO_MAIL_TRANSPORT = var.env_generic_matomo_mail_transport
+    MATOMO_MAIL_TYPE = var.env_generic_matomo_mail_type
+    MATOMO_MAIL_USERNAME = var.env_generic_matomo_mail_username
+    MATOMO_GENERAL_LOGIN_ALLOWLIST_APPLY_TO_REPORTING_API_REQUESTS = 0
+    MATOMO_GENERAL_FORCE_SSL = var.env_generic_matomo_force_ssl
+  }
+}

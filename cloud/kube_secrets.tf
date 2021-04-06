@@ -24,6 +24,17 @@ resource "kubernetes_secret" "wt-secret-db-postgresql" {
   }
 }
 
+resource "kubernetes_secret" "wt-secret-db-mysql" {
+  metadata {
+    name = "wt-secret-db-mysql"
+  }
+
+  data = {
+    MYSQL_ADDRESS = var.env_mysql_address
+    MYSQL_URL = "mysql://${var.env_mysql_admin_username}:${var.env_mysql_admin_password}@${var.env_mysql_address}:${var.env_mysql_port}"
+  }
+}
+
 resource "kubernetes_secret" "wt-secret-db-rabbitmq" {
   metadata {
     name = "wt-secret-db-rabbitmq"
@@ -148,5 +159,18 @@ resource "kubernetes_secret" "wt-secret-token" {
     ARGU_APP_SECRET = var.env_service_app_secret
 
     BUGSNAG_KEY = var.env_token_bugsnag_key
+  }
+}
+
+resource "kubernetes_secret" "wt-secret-matomo" {
+  metadata {
+    name = "wt-secret-matomo"
+  }
+  type = "Opaque"
+
+  data = {
+    MATOMO_GENERAL_SALT = var.env_generic_matomo_general_salt
+    MATOMO_MAIL_PASSWORD = var.env_generic_matomo_mail_password
+    MATOMO_DATABASE_SSL_CA_PATH = var.env_generic_matomo_database_ca_path
   }
 }

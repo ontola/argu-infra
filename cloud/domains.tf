@@ -53,7 +53,7 @@ resource "aws_route53_record" "analytics" {
   for_each = local.domains
 
   zone_id = aws_route53_zone.this[each.key].zone_id
-  name    = format("analytics.%s", each.value)
+  name    = format("%s.%s", var.analytics_subdomain, each.value)
   type    = "CNAME"
   ttl     = 60
   records = [each.value]

@@ -2,12 +2,15 @@ variable services {
   description = "Map of kubernetes services."
   type = map(object({
     service_name    = string
-    image_name      = string
+    override_image  = optional(string)
+    image_name      = optional(string)
+    command         = optional(list(string))
     container_port  = number
     port            = number
     replicas        = number
     scrape          = bool
-    databases       = list(string)
+    databases       = optional(list(string))
+    volumes         = optional(map(string))
   }))
 
   default = {
@@ -24,7 +27,7 @@ variable services {
         "redis",
         "rabbitmq",
       ]
-    },
+    }
     cache = {
       service_name = "apex-rs"
       image_name = "apex-rs"
@@ -36,7 +39,7 @@ variable services {
         "postgresql",
         "redis",
       ]
-    },
+    }
     frontend = {
       service_name = "frontend"
       image_name = "libro"
@@ -47,7 +50,7 @@ variable services {
       databases = [
         "redis"
       ]
-    },
+    }
     email = {
       service_name = "email"
       image_name = "email_service"
@@ -60,7 +63,7 @@ variable services {
         "redis",
         "rabbitmq",
       ]
-    },
+    }
     token = {
       service_name = "token"
       image_name = "token_service"
@@ -73,7 +76,21 @@ variable services {
         "redis",
         "rabbitmq",
       ]
-    },
+    }
+    matomo = {
+      service_name = "matomo"
+      override_image = "matomo:3-apache"
+      container_port = 80
+      port = 80
+      replicas = 1
+      scrape = false
+      databases = [
+        "mysql",
+      ]
+      volumes = {
+        "html" = "/var/www/html"
+      }
+    }
   }
 }
 
@@ -114,9 +131,23 @@ resource "kubernetes_deployment" "service-deployments" {
         image_pull_secrets {
           name = kubernetes_secret.container-registry-secret.metadata[0].name
         }
+
+        dynamic "volume" {
+          for_each = coalesce(each.value.volumes, {})
+
+          content {
+            name = "volume-${each.key}-${volume.key}"
+
+            persistent_volume_claim {
+              claim_name = kubernetes_persistent_volume_claim.wt-volume-claim-matomo-html.metadata[0].name
+            }
+          }
+        }
+
         container {
           name = each.key
-          image = "${var.image_registry}/${var.image_registry_org}/${each.value.image_name}:${try(var.service_image_tag[each.key], var.image_tag)}"
+          image = coalesce(each.value.override_image, "${var.image_registry}/${var.image_registry_org}/${coalesce(each.value.image_name, "-")}:${try(var.service_image_tag[each.key], var.image_tag)}")
+          command = each.value.command
           port {
             container_port = each.value.container_port
           }
@@ -143,12 +174,21 @@ resource "kubernetes_deployment" "service-deployments" {
           }
 
           dynamic "env_from" {
-            for_each = each.value.databases
+            for_each = coalesce(each.value.databases, [])
 
             content {
               secret_ref {
                 name = "wt-secret-db-${env_from.value}"
               }
+            }
+          }
+
+          dynamic "volume_mount" {
+            for_each = coalesce(each.value.volumes, {})
+
+            content {
+              name = "volume-${each.key}-${volume_mount.key}"
+              mount_path = volume_mount.value
             }
           }
         }
