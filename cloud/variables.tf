@@ -459,15 +459,27 @@ variable "env_generic_matomo_general_salt" {
 
 # Versions
 
-variable "ver_chart_cert_manager" { type = string }
+variable "ver_chart_cert_manager" {
+  description = "https://github.com/jetstack/cert-manager/releases"
+  type = string
+}
 variable "ver_chart_elasticsearch" { type = string }
 variable "ver_chart_grafana" { type = string }
 variable "ver_chart_nginx_ingress" {
   description = "https://github.com/kubernetes/ingress-nginx/blob/master/charts/ingress-nginx/CHANGELOG.md"
   type = string
 }
-variable "ver_chart_prometheus" { type = string }
-variable "ver_chart_rabbitmq" { type = string }
+variable "ver_chart_prometheus" {
+  description = <<-EOT
+  https://github.com/bitnami/charts/tree/master/bitnami/kube-prometheus/
+  https://github.com/bitnami/charts/tree/master/bitnami/kube-prometheus/#upgrading
+  EOT
+  type = string
+}
+variable "ver_chart_rabbitmq" {
+  description = "https://artifacthub.io/packages/helm/bitnami/rabbitmq"
+  type = string
+}
 
 # Locals
 

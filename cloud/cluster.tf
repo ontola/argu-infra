@@ -172,15 +172,19 @@ resource "helm_release" "prometheus" {
   atomic = true
   cleanup_on_fail = true
   set {
-    name = "prometheus.additionalScrapeConfigsExternal.enabled"
+    name = "prometheus.additionalScrapeConfigs.enabled"
     value = "true"
   }
   set {
-    name = "prometheus.additionalScrapeConfigsExternal.name"
+    name = "prometheus.additionalScrapeConfigs.type"
+    value = "external"
+  }
+  set {
+    name = "prometheus.additionalScrapeConfigs.external.name"
     value = kubernetes_secret.prometheus-config.metadata[0].name
   }
   set {
-    name = "prometheus.additionalScrapeConfigsExternal.key"
+    name = "prometheus.additionalScrapeConfigs.external.key"
     value = "prometheus.yml"
   }
   set {

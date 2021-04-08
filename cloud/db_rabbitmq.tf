@@ -3,6 +3,11 @@ resource "random_password" "rabbitmq-password" {
   special = false
 }
 
+resource "random_password" "rabbitmq-erlang-cookie" {
+  length = 250
+  special = false
+}
+
 resource "kubernetes_secret" "rabbitmq-credentials" {
   metadata {
     name = "rabbitmq-credentials"
@@ -32,5 +37,9 @@ resource "helm_release" "rabbitmq" {
   set {
     name = "service.port"
     value = var.env_rabbitmq_port
+  }
+  set {
+    name = "auth.erlangCookie"
+    value = random_password.rabbitmq-erlang-cookie.result
   }
 }
