@@ -102,6 +102,7 @@ variable "app_namespace" {
 variable "do_token" {
   type = string
   description = "Used to manage the cluster and networking infrastructure"
+  sensitive = true
 }
 
 variable "application_name" {
@@ -127,6 +128,7 @@ variable "image_registry_user" {
 
 variable "image_registry_token" {
   type = string
+  sensitive = true
 }
 
 variable "image_tag" {
@@ -218,6 +220,7 @@ variable "env_generic_matomo_mail_host" {
 
 variable "env_generic_matomo_mail_password" {
   type = string
+  sensitive = true
 }
 
 variable "env_generic_matomo_mail_port" {
@@ -267,6 +270,7 @@ variable "env_postgresql_username" {
 
 variable "env_postgresql_password" {
   type = string
+  sensitive = true
 }
 
 ### Env - Databases - MySQL
@@ -289,6 +293,7 @@ variable "env_mysql_admin_username" {
 
 variable "env_mysql_admin_password" {
   type = string
+  sensitive = true
 }
 
 ### Env - Databases - Rabbitmq
@@ -310,6 +315,7 @@ variable "env_redis_username" {
 
 variable "env_redis_password" {
   type = string
+  sensitive = true
 }
 
 variable "env_redis_port" {
@@ -329,22 +335,27 @@ variable "env_elasticsearch_url" {
 
 variable "env_rails_oauth_token" {
   type = string
+  sensitive = true
 }
 
 variable "env_service_token" {
   type = string
+  sensitive = true
 }
 
 variable "env_secret_key_base" {
   type = string
+  sensitive = true
 }
 
 variable "env_secret_token" {
   type = string
+  sensitive = true
 }
 
 variable "env_jwt_encryption_token" {
   type = string
+  sensitive = true
 }
 
 variable "env_service_app_id" {
@@ -353,6 +364,7 @@ variable "env_service_app_id" {
 
 variable "env_service_app_secret" {
   type = string
+  sensitive = true
 }
 
 variable "env_service_aws_id" {
@@ -361,6 +373,7 @@ variable "env_service_aws_id" {
 
 variable "env_service_aws_key" {
   type = string
+  sensitive = true
 }
 
 variable "env_service_aws_bucket" {
@@ -381,10 +394,12 @@ variable "env_apex_bugsnag_key" {
 
 variable "env_apex_devise_secret" {
   type = string
+  sensitive = true
 }
 
 variable "env_apex_devise_pepper" {
   type = string
+  sensitive = true
 }
 
 variable "env_service_apex_nominatim_url" {
@@ -404,6 +419,7 @@ variable "env_email_bugsnag_key" {
 variable "env_email_mailjet_key" {
   type = string
   default = ""
+  sensitive = true
 }
 
 variable "env_email_mailjet_secret" {
@@ -455,6 +471,7 @@ variable "env_matomo_mysql_database" {
 
 variable "env_generic_matomo_general_salt" {
   type = string
+  sensitive = true
 }
 
 # Versions
