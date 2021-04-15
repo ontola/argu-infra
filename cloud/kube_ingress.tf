@@ -1,9 +1,9 @@
 locals {
-  full_base_and_subdomains = list(
+  full_base_and_subdomains = [
     local.full_base_domain,
     "www.${local.full_base_domain}",
 //    "v6.${local.full_base_domain}",
-  )
+  ]
 
   expanded_managed_domains = flatten([
     for domain in var.managed_domains : [
@@ -18,9 +18,9 @@ locals {
   ))
 
   mailcatcher_domains = var.cluster_env != "production" ? (
-      compact(list(
+      compact([
         local.mailcatcher-domain,
-      ))
+      ])
     ) : (
       []
     )
