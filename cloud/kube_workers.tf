@@ -5,20 +5,63 @@ variable workers {
     image_name      = string
     component       = string
     command         = list(string)
-    replicas        = number
     databases       = list(string)
   }))
 
   default = [
     {
+      service = "apex"
+      component = "worker"
+      image_name = "apex"
+      command = ["bundle", "exec", "sidekiq"]
+      databases = [
+        "elasticsearch",
+        "postgresql",
+        "redis",
+        "rabbitmq",
+      ]
+    },
+    {
       service = "cache"
       component = "worker"
       image_name = "apex-rs"
       command = ["/usr/local/bin/invalidator_redis"]
-      replicas = 1
       databases = [
         "postgresql",
         "redis",
+      ]
+    },
+    {
+      service = "email"
+      component = "worker"
+      image_name = "email_service"
+      command = ["bundle", "exec", "sidekiq"]
+      databases = [
+        "postgresql",
+        "redis",
+        "rabbitmq",
+      ]
+    },
+    {
+      service = "email"
+      component = "subscriber"
+      image_name = "email_service"
+      command = ["bundle", "exec", "rake", "broadcast:subscribe"]
+      databases = [
+        "postgresql",
+        "redis",
+        "rabbitmq",
+      ]
+    },
+    {
+      service = "token"
+      component = "worker"
+      image_name = "token_service"
+      command = ["bundle", "exec", "sidekiq"]
+      databases = [
+        "postgresql",
+        "redis",
+        "rabbitmq",
       ]
     },
   ]
@@ -37,7 +80,7 @@ resource "kubernetes_deployment" "worker-deployments" {
 
   spec {
     revision_history_limit = 2
-    replicas = each.value.replicas
+    replicas = var.cluster_env == "production" ? 0 : 1
 
     selector {
       match_labels = {
