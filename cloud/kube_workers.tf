@@ -11,19 +11,6 @@ variable workers {
 
   default = [
     {
-      service = "apex"
-      component = "worker"
-      image_name = "apex"
-      command = ["bundle", "exec", "sidekiq"]
-      replicas = 1
-      databases = [
-        "elasticsearch",
-        "postgresql",
-        "redis",
-        "rabbitmq",
-      ]
-    },
-    {
       service = "cache"
       component = "worker"
       image_name = "apex-rs"
@@ -32,42 +19,6 @@ variable workers {
       databases = [
         "postgresql",
         "redis",
-      ]
-    },
-    {
-      service = "email"
-      component = "worker"
-      image_name = "email_service"
-      command = ["bundle", "exec", "sidekiq"]
-      replicas = 1
-      databases = [
-        "postgresql",
-        "redis",
-        "rabbitmq",
-      ]
-    },
-    {
-      service = "email"
-      component = "subscriber"
-      image_name = "email_service"
-      command = ["bundle", "exec", "rake", "broadcast:subscribe"]
-      replicas = 1
-      databases = [
-        "postgresql",
-        "redis",
-        "rabbitmq",
-      ]
-    },
-    {
-      service = "token"
-      component = "worker"
-      image_name = "token_service"
-      command = ["bundle", "exec", "sidekiq"]
-      replicas = 1
-      databases = [
-        "postgresql",
-        "redis",
-        "rabbitmq",
       ]
     },
   ]
