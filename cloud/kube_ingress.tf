@@ -74,9 +74,16 @@ resource "kubernetes_manifest" "letsencrypt-staging-issuer" {
         # Add a single challenge solver, HTTP01 using nginx
         solvers = [
           {
-            http01 = {
-              ingress = {
-                class = "nginx"
+            dns01 = {
+              webhook: {
+                groupName: "io.ontola"
+                solverName: "openprovider-solver"
+                config: {
+                  apiKeySecretRef: {
+                    name: kubernetes_secret.wt-secret-infra-openprovider-dns.metadata[0].name
+                    key: keys(kubernetes_secret.wt-secret-infra-openprovider-dns.data)[0]
+                  }
+                }
               }
             }
           }

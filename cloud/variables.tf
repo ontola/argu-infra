@@ -105,6 +105,12 @@ variable "do_token" {
   sensitive = true
 }
 
+variable "openprovider_token" {
+  type = string
+  description = "Used to enter TXT records into the domains for DNS01 verification."
+  sensitive = true
+}
+
 variable "application_name" {
   type = string
   default = "webtools"

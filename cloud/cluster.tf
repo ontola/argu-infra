@@ -211,3 +211,13 @@ resource "helm_release" "configmap-reloader" {
   atomic = true
   cleanup_on_fail = true
 }
+
+resource "helm_release" "openprovider-webhook" {
+  repository = "https://ontola.github.io/openprovider-webhook/charts"
+  chart = "openprovider-webhook"
+  name = "openprovider-webhook"
+  version = "0.1.0"
+
+  atomic = true
+  cleanup_on_fail = true
+}

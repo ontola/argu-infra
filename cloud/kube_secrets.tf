@@ -1,3 +1,15 @@
+# Infrastructure
+
+resource "kubernetes_secret" "wt-secret-infra-openprovider-dns" {
+  metadata {
+    name = "openprovider-dns"
+  }
+
+  data = {
+    access-token: base64encode(var.openprovider_token)
+  }
+}
+
 # Databases
 
 resource "kubernetes_secret" "wt-secret-db-elasticsearch" {
