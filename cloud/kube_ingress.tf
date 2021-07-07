@@ -17,7 +17,7 @@ locals {
     [for domain in var.managed_domains : "analytics.${join("", [var.env_domain_prefix, domain])}"],
   ))
 
-  mailcatcher_domains = var.cluster_env != "production" ? (
+  mailcatcher_domains = var.enable_mailcatcher == true ? (
       compact([
         local.mailcatcher-domain,
       ])

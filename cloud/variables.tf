@@ -110,6 +110,11 @@ variable "application_name" {
   default = "webtools"
 }
 
+variable "enable_mailcatcher" {
+  type = bool
+  default = false
+}
+
 ##  Infrastructure - images
 variable "image_registry" {
   type = string

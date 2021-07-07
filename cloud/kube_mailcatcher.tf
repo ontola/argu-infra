@@ -1,5 +1,5 @@
 locals {
-  mailcatcher-domain = var.cluster_env != "production" ? "${kubernetes_service.service-mailcatcher[0].metadata[0].name}.${local.full_base_domain}" : ""
+  mailcatcher-domain = var.enable_mailcatcher == true ? "${kubernetes_service.service-mailcatcher[0].metadata[0].name}.${local.full_base_domain}" : ""
 }
 
 resource "kubernetes_deployment" "deployment-mailcatcher" {
@@ -50,7 +50,7 @@ resource "kubernetes_deployment" "deployment-mailcatcher" {
 }
 
 resource "kubernetes_service" "service-mailcatcher" {
-  count = var.cluster_env != "production" ? 1 : 0
+  count = var.enable_mailcatcher == true ? 1 : 0
 
   metadata {
     name = "mailcatcher"
