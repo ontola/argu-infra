@@ -322,6 +322,10 @@ variable "env_redis_port" {
   type = string
 }
 
+variable "env_redis_ssl" {
+  type = string
+}
+
 ### Env - Databases - Elasticsearch
 
 variable "env_elasticsearch_url" {

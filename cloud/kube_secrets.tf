@@ -53,7 +53,11 @@ resource "kubernetes_secret" "wt-secret-db-redis" {
 
   data = {
     REDIS_ADDRESS = var.env_redis_address
+    REDIS_PORT = var.env_redis_port
     REDIS_URL = "rediss://${var.env_redis_username}:${var.env_redis_password}@${var.env_redis_address}:${var.env_redis_port}"
+    REDIS_USERNAME = var.env_redis_username
+    REDIS_PASSWORD = var.env_redis_password
+    REDIS_SSL = var.env_redis_ssl
   }
 }
 

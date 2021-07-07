@@ -22,16 +22,6 @@ variable workers {
       ]
     },
     {
-      service = "cache"
-      component = "worker"
-      image_name = "apex-rs"
-      command = ["/usr/local/bin/invalidator_redis"]
-      databases = [
-        "postgresql",
-        "redis",
-      ]
-    },
-    {
       service = "email"
       component = "worker"
       image_name = "email_service"

@@ -17,7 +17,7 @@ case $tier in
     remote_port=3000
     ;;
   cache)
-    tier=apex-rs
+    tier=cache
     remote_port=3030
     ;;
   frontend)

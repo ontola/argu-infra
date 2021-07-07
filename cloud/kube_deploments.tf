@@ -29,8 +29,8 @@ variable services {
       ]
     }
     cache = {
-      service_name = "apex-rs"
-      image_name = "apex-rs"
+      service_name = "cache"
+      image_name = "cache/core-747"
       container_port = 3030
       port = 3030
       replicas = 1
