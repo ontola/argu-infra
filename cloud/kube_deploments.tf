@@ -30,7 +30,7 @@ variable services {
     }
     cache = {
       service_name = "cache"
-      image_name = "cache/core-747"
+      image_name = "cache/master"
       container_port = 3030
       port = 3030
       replicas = 1
