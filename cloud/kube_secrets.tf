@@ -86,6 +86,7 @@ resource "kubernetes_secret" "wt-secret-apex" {
     AWS_KEY = var.env_service_aws_key
     AWS_SECRET_ACCESS_KEY = var.env_service_aws_key
     AWS_BUCKET = var.env_service_aws_bucket
+    CACHE_URL = var.env_cache_url
     FACEBOOK_KEY = var.env_service_facebook_key
     NOMINATIM_URL = var.env_service_apex_nominatim_url
   }
