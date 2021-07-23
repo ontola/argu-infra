@@ -466,6 +466,10 @@ variable "env_cache_postgresql_database" {
   type = string
 }
 
+variable "env_cache_url" {
+  type = string
+}
+
 variable "env_email_postgresql_database" {
   type = string
 }
