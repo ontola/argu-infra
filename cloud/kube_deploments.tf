@@ -43,7 +43,7 @@ variable services {
     frontend = {
       service_name = "frontend"
       image_name = "libro"
-      container_port = 8080
+      container_port = 3080
       port = 80
       replicas = 2
       scrape = false
