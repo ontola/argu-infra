@@ -106,5 +106,7 @@ resource "kubernetes_config_map" "wt-configmap-matomo" {
     MATOMO_MAIL_USERNAME = var.env_generic_matomo_mail_username
     MATOMO_GENERAL_LOGIN_ALLOWLIST_APPLY_TO_REPORTING_API_REQUESTS = 0
     MATOMO_GENERAL_FORCE_SSL = var.env_generic_matomo_force_ssl
+    SERVER_REPORTING_KEY = var.env_frontend_server_bugsnag_key
+    CLIENT_REPORTING_KEY = var.env_frontend_client_bugsnag_key
   }
 }

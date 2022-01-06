@@ -438,7 +438,11 @@ variable "env_email_mailjet_secret" {
 
 ### Env - Secrets - Service specific - frontend
 
-variable "env_frontend_bugsnag_key" {
+variable "env_frontend_server_bugsnag_key" {
+  type = string
+}
+
+variable "env_frontend_client_bugsnag_key" {
   type = string
 }
 
