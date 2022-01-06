@@ -28,18 +28,6 @@ variable services {
         "rabbitmq",
       ]
     }
-    cache = {
-      service_name = "cache"
-      image_name = "cache/master"
-      container_port = 3030
-      port = 3030
-      replicas = 1
-      scrape = true
-      databases = [
-        "postgresql",
-        "redis",
-      ]
-    }
     frontend = {
       service_name = "frontend"
       image_name = "libro"

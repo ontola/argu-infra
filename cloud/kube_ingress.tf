@@ -192,14 +192,6 @@ resource "kubernetes_ingress" "default-ingress" {
 
         http {
           path {
-            path = "/link-lib"
-            backend {
-              service_name = kubernetes_service.service-services[local.cache_provider_service].metadata[0].name
-              service_port = var.services.cache.port
-            }
-          }
-
-          path {
             path = "/"
             backend {
               service_name = "frontend"

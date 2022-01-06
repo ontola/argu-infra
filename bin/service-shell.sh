@@ -11,7 +11,7 @@ component=${component:-'server'}
 echo "Opening a shell for service '$tier', component '$component'"
 command="$3"
 case $tier in
-  matomo | cache) default_command='/bin/bash' ;;
+  matomo) default_command='/bin/bash' ;;
   *) default_command='/bin/sh' ;;
 esac
 

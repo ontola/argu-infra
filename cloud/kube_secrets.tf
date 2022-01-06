@@ -86,25 +86,8 @@ resource "kubernetes_secret" "wt-secret-apex" {
     AWS_KEY = var.env_service_aws_key
     AWS_SECRET_ACCESS_KEY = var.env_service_aws_key
     AWS_BUCKET = var.env_service_aws_bucket
-    CACHE_URL = var.env_cache_url
     FACEBOOK_KEY = var.env_service_facebook_key
     NOMINATIM_URL = var.env_service_apex_nominatim_url
-  }
-}
-
-resource "kubernetes_secret" "wt-secret-cache" {
-  metadata {
-    name = "wt-secret-cache"
-  }
-  type = "Opaque"
-
-  data = {
-    ARGU_APP_ID = var.env_service_app_id
-    ARGU_APP_SECRET = var.env_service_app_secret
-    JWT_ENCRYPTION_TOKEN = var.env_jwt_encryption_token
-    SESSION_SECRET = var.env_secret_key_base
-    REDIS_URL = "${kubernetes_secret.wt-secret-db-redis.data.REDIS_URL}/0"
-    DATABASE_URL = "${kubernetes_secret.wt-secret-db-postgresql.data.POSTGRESQL_URL}/${var.env_cache_postgresql_database}?sslmode=require"
   }
 }
 

@@ -65,19 +65,6 @@ resource "kubernetes_config_map" "wt-configmap-token" {
   }
 }
 
-resource "kubernetes_config_map" "wt-configmap-cache" {
-  metadata {
-    name = "wt-configmap-cache"
-  }
-
-  data = {
-    RUST_LOG = "trace"
-    PROXY_TIMEOUT = "30"
-    SESSION_COOKIE_NAME = "koa:sess"
-    SESSION_COOKIE_SIGNATURE_NAME = "koa:sess.sig"
-  }
-}
-
 resource "kubernetes_config_map" "wt-configmap-frontend" {
   metadata {
     name = "wt-configmap-frontend"

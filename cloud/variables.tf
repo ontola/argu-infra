@@ -1,6 +1,5 @@
 locals {
   data_provider_service = "apex"
-  cache_provider_service = "cache"
 }
 
 # Jobs
@@ -463,14 +462,6 @@ variable "env_token_bugsnag_key" {
 ## Other env - service specific
 
 variable "env_apex_postgresql_database" {
-  type = string
-}
-
-variable "env_cache_postgresql_database" {
-  type = string
-}
-
-variable "env_cache_url" {
   type = string
 }
 

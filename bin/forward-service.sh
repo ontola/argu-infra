@@ -16,10 +16,6 @@ case $tier in
   email | token)
     remote_port=3000
     ;;
-  cache)
-    tier=cache
-    remote_port=3030
-    ;;
   frontend)
     remote_port=3000
     ;;
