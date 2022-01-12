@@ -24,6 +24,7 @@ resource "kubernetes_config_map" "wt-configmap-env" {
     LOG_LEVEL = var.env_generic_log_level
     HOSTNAME = join("", [var.env_domain_prefix, var.base_domain])
     ARGU_API_URL = "http://${kubernetes_service.service-services[local.data_provider_service].metadata[0].name}.${local.app_domain_base}:${kubernetes_service.service-services[local.data_provider_service].spec[0].port[0].target_port}"
+    FRONTEND_SERVICE_PORT = var.services.frontend.port
   }
 }
 
