@@ -28,6 +28,9 @@ resource "kubernetes_job" "clear-cache" {
       }
 
       spec {
+        image_pull_secrets {
+          name = kubernetes_secret.container-registry-secret.metadata[0].name
+        }
         container {
           name = "clear-cache-job"
           image = "${var.image_registry}/${var.image_registry_org}/${var.services.apex.image_name}:${try(var.service_image_tag[local.job_cache_clear_service], var.image_tag)}"
