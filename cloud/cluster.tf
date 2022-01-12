@@ -117,6 +117,21 @@ resource "helm_release" "nginx-ingress" {
   }
   set {
     type = "string"
+    name = "controller.config.hsts"
+    value = true
+  }
+  set {
+    type = "string"
+    name = "controller.config.hsts-include-subdomains"
+    value = true
+  }
+  set {
+    type = "string"
+    name = "controller.config.hsts-max-age"
+    value = "31536000"
+  }
+  set {
+    type = "string"
     name = "controller.config.enable-owasp-modsecurity-crs"
     value = true
   }
