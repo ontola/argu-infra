@@ -2,7 +2,7 @@ locals {
   full_base_and_subdomains = [
     local.full_base_domain,
     "www.${local.full_base_domain}",
-//    "v6.${local.full_base_domain}",
+    //    "v6.${local.full_base_domain}",
   ]
 
   expanded_managed_domains = flatten([
@@ -18,12 +18,12 @@ locals {
   ))
 
   mailcatcher_domains = var.enable_mailcatcher == true ? (
-      compact([
-        local.mailcatcher-domain,
-      ])
+    compact([
+      local.mailcatcher-domain,
+    ])
     ) : (
-      []
-    )
+    []
+  )
 
   website_domains = distinct(concat(
     local.full_base_and_subdomains,
@@ -44,8 +44,8 @@ locals {
   used_issuer = (var.letsencrypt_issuers == true
     ? (var.letsencrypt_env_production == true
       ? kubernetes_manifest.letsencrypt-prod-issuer[0].manifest.metadata.name
-      : kubernetes_manifest.letsencrypt-staging-issuer[0].manifest.metadata.name)
-    : "")
+    : kubernetes_manifest.letsencrypt-staging-issuer[0].manifest.metadata.name)
+  : "")
 }
 
 resource "kubernetes_manifest" "letsencrypt-staging-issuer" {
@@ -53,7 +53,7 @@ resource "kubernetes_manifest" "letsencrypt-staging-issuer" {
 
   manifest = {
     apiVersion = "cert-manager.io/v1"
-    kind = "ClusterIssuer"
+    kind       = "ClusterIssuer"
     metadata = {
       name = "letsencrypt-staging-issuer"
     }
@@ -62,7 +62,7 @@ resource "kubernetes_manifest" "letsencrypt-staging-issuer" {
         # You must replace this email address with your own.
         # Let's Encrypt will use this to contact you about expiring
         # certificates, and issues related to your account.
-        email = var.letsencrypt_email
+        email  = var.letsencrypt_email
         server = "https://acme-staging-v02.api.letsencrypt.org/directory"
         privateKeySecretRef = {
           # Secret resource that will be used to store the account's private key.
@@ -94,7 +94,7 @@ resource "kubernetes_manifest" "letsencrypt-prod-issuer" {
 
   manifest = {
     apiVersion = "cert-manager.io/v1"
-    kind = "ClusterIssuer"
+    kind       = "ClusterIssuer"
     metadata = {
       name = "letsencrypt-prod-issuer"
     }
@@ -103,7 +103,7 @@ resource "kubernetes_manifest" "letsencrypt-prod-issuer" {
         # You must replace this email address with your own.
         # Let's Encrypt will use this to contact you about expiring
         # certificates, and issues related to your account.
-        email = var.letsencrypt_email
+        email  = var.letsencrypt_email
         server = "https://acme-v02.api.letsencrypt.org/directory"
         privateKeySecretRef = {
           # Secret resource that will be used to store the account's private key.
@@ -131,12 +131,12 @@ resource "kubernetes_manifest" "letsencrypt-prod-issuer" {
 
 resource "kubernetes_config_map" "custom-headers" {
   metadata {
-    name = "nginx-custom-headers"
+    name      = "nginx-custom-headers"
     namespace = "default"
   }
 
   data = {
-    "X-Powered-By": "Ontola.io"
+    "X-Powered-By" : "Ontola.io"
   }
 }
 
@@ -146,13 +146,13 @@ resource "kubernetes_ingress" "default-ingress" {
   metadata {
     name = "default-ingress"
     annotations = {
-      "cert-manager.io/cluster-issuer": local.used_issuer
-      "acme.cert-manager.io/http01-edit-in-place": "true"
-      "service.beta.kubernetes.io/do-loadbalancer-healthcheck-path": kubernetes_deployment.default-http-backend.spec[0].template[0].spec[0].container[0].liveness_probe[0].http_get[0].path
-      "service.beta.kubernetes.io/do-loadbalancer-healthcheck-protocol": "http"
-      "service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol": "true"
-      "nginx.ingress.kubernetes.io/server-alias": join(",", local.website_domains)
-      "nginx.ingress.kubernetes.io/whitelist-source-range": var.ip_whitelist
+      "cert-manager.io/cluster-issuer" : local.used_issuer
+      "acme.cert-manager.io/http01-edit-in-place" : "true"
+      "service.beta.kubernetes.io/do-loadbalancer-healthcheck-path" : kubernetes_deployment.default-http-backend.spec[0].template[0].spec[0].container[0].liveness_probe[0].http_get[0].path
+      "service.beta.kubernetes.io/do-loadbalancer-healthcheck-protocol" : "http"
+      "service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol" : "true"
+      "nginx.ingress.kubernetes.io/server-alias" : join(",", local.website_domains)
+      "nginx.ingress.kubernetes.io/whitelist-source-range" : var.ip_whitelist
     }
   }
 
@@ -201,7 +201,7 @@ resource "kubernetes_ingress" "default-ingress" {
 
     tls {
       secret_name = "tls"
-      hosts = local.ingress_tls_hosts
+      hosts       = local.ingress_tls_hosts
     }
   }
 }

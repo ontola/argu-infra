@@ -18,8 +18,8 @@ resource "random_pet" "node_pool" {
 }
 
 resource "digitalocean_kubernetes_cluster" "k8s-ams3-ontola-apex-1" {
-  name = local.cluster_name
-  region = var.do_region
+  name    = local.cluster_name
+  region  = var.do_region
   version = var.cluster_env != "staging" ? "1.20.2-do.0" : "1.19.3-do.2"
   tags = [
     "argu-${var.cluster_env}",
@@ -28,8 +28,8 @@ resource "digitalocean_kubernetes_cluster" "k8s-ams3-ontola-apex-1" {
   ]
 
   node_pool {
-    name = var.cluster_env != "staging" ? "pool-gp-${random_pet.node_pool.id}" : "pool-gp-curious-cougar"
-    size = "g-2vcpu-8gb"
+    name       = var.cluster_env != "staging" ? "pool-gp-${random_pet.node_pool.id}" : "pool-gp-curious-cougar"
+    size       = "g-2vcpu-8gb"
     node_count = 2
     auto_scale = false
 
@@ -45,18 +45,18 @@ resource "tls_private_key" "this" {
 }
 
 resource "digitalocean_ssh_key" "this" {
-  name = "terraform"
+  name       = "terraform"
   public_key = tls_private_key.this.public_key_openssh
 }
 
 resource "digitalocean_droplet" "haproxy" {
-  name = var.cluster_env != "staging" ? "haproxy-${var.cluster_env}-${random_pet.tfc_refresh.id}" :  "haproxy-${random_pet.tfc_refresh.id}"
-  image = "ubuntu-20-04-x64"
-  size = "s-1vcpu-1gb"
+  name   = var.cluster_env != "staging" ? "haproxy-${var.cluster_env}-${random_pet.tfc_refresh.id}" : "haproxy-${random_pet.tfc_refresh.id}"
+  image  = "ubuntu-20-04-x64"
+  size   = "s-1vcpu-1gb"
   region = var.do_region
 
-  ipv6 = true
-  monitoring = true
+  ipv6               = true
+  monitoring         = true
   private_networking = true
   user_data = templatefile("${path.module}/config/haproxy_userdata.tpl", {
     cluster_ipv4 = kubernetes_ingress.default-ingress.status[0].load_balancer[0].ingress[0].ip
@@ -88,88 +88,88 @@ resource "kubernetes_namespace" "cert-manager" {
 
 resource "helm_release" "nginx-ingress" {
   repository = "https://kubernetes.github.io/ingress-nginx"
-  chart = "ingress-nginx"
-  name = "ingress-nginx"
-  version = var.ver_chart_nginx_ingress
+  chart      = "ingress-nginx"
+  name       = "ingress-nginx"
+  version    = var.ver_chart_nginx_ingress
 
   set {
-    name = "controller.config.add-headers"
+    name  = "controller.config.add-headers"
     value = "${kubernetes_config_map.custom-headers.metadata[0].namespace}/${kubernetes_config_map.custom-headers.metadata[0].name}"
   }
   set {
-    name = "controller.config.brotli-types"
+    name  = "controller.config.brotli-types"
     value = "${local.ootb_brotli_types} ${join(" ", local.custom_brotli_types)}"
   }
   set {
-    type = "string"
-    name = "controller.config.enable-brotli"
+    type  = "string"
+    name  = "controller.config.enable-brotli"
     value = true
   }
   set {
-    type = "string"
-    name = "controller.config.enable-modsecurity"
+    type  = "string"
+    name  = "controller.config.enable-modsecurity"
     value = true
   }
   set {
-    type = "string"
-    name = "controller.config.enable-ocsp"
+    type  = "string"
+    name  = "controller.config.enable-ocsp"
     value = true
   }
   set {
-    type = "string"
-    name = "controller.config.hsts"
+    type  = "string"
+    name  = "controller.config.hsts"
     value = true
   }
   set {
-    type = "string"
-    name = "controller.config.hsts-include-subdomains"
+    type  = "string"
+    name  = "controller.config.hsts-include-subdomains"
     value = true
   }
   set {
-    type = "string"
-    name = "controller.config.hsts-max-age"
+    type  = "string"
+    name  = "controller.config.hsts-max-age"
     value = "31536000"
   }
   set {
-    type = "string"
-    name = "controller.config.enable-owasp-modsecurity-crs"
+    type  = "string"
+    name  = "controller.config.enable-owasp-modsecurity-crs"
     value = true
   }
   set {
-    name = "controller.config.proxy-body-size"
+    name  = "controller.config.proxy-body-size"
     value = "250m"
   }
   set {
-    name = "controller.config.use-proxy-protocol"
+    name  = "controller.config.use-proxy-protocol"
     value = true
   }
 }
 
 resource "helm_release" "cert-manager" {
   description = "https://artifacthub.io/packages/helm/jetstack/cert-manager"
-  repository = "https://charts.jetstack.io"
-  chart = "cert-manager"
-  name = "cert-manager"
-  version = var.ver_chart_cert_manager
+  repository  = "https://charts.jetstack.io"
+  chart       = "cert-manager"
+  name        = "cert-manager"
+  version     = var.ver_chart_cert_manager
 
   set {
-    name = "installCRDs"
+    name  = "installCRDs"
     value = "true"
   }
 }
 
 resource "helm_release" "elasticsearch" {
   repository = "https://charts.bitnami.com/bitnami"
-  chart = "elasticsearch"
-  name = "elasticsearch"
-  version = var.ver_chart_elasticsearch
+  chart      = "elasticsearch"
+  name       = "elasticsearch"
+  version    = var.ver_chart_elasticsearch
 
   cleanup_on_fail = true
 }
 
 resource "kubernetes_secret" "prometheus-config" {
   metadata {
-    name = "prometheus-config"
+    name      = "prometheus-config"
     namespace = "default"
   }
 
@@ -180,49 +180,49 @@ resource "kubernetes_secret" "prometheus-config" {
 
 resource "helm_release" "prometheus" {
   repository = "https://charts.bitnami.com/bitnami"
-  chart = "kube-prometheus"
-  name = "prometheus"
-  version = var.ver_chart_prometheus
+  chart      = "kube-prometheus"
+  name       = "prometheus"
+  version    = var.ver_chart_prometheus
 
-  atomic = true
+  atomic          = true
   cleanup_on_fail = true
   set {
-    name = "prometheus.additionalScrapeConfigs.enabled"
+    name  = "prometheus.additionalScrapeConfigs.enabled"
     value = "true"
   }
   set {
-    name = "prometheus.additionalScrapeConfigs.type"
+    name  = "prometheus.additionalScrapeConfigs.type"
     value = "external"
   }
   set {
-    name = "prometheus.additionalScrapeConfigs.external.name"
+    name  = "prometheus.additionalScrapeConfigs.external.name"
     value = kubernetes_secret.prometheus-config.metadata[0].name
   }
   set {
-    name = "prometheus.additionalScrapeConfigs.external.key"
+    name  = "prometheus.additionalScrapeConfigs.external.key"
     value = "prometheus.yml"
   }
   set {
-    name = "prometheus.enableAdminAPI"
+    name  = "prometheus.enableAdminAPI"
     value = "true"
   }
 }
 
 resource "helm_release" "grafana" {
   repository = "https://charts.bitnami.com/bitnami"
-  chart = "grafana"
-  name = "grafana"
-  version = var.ver_chart_grafana
+  chart      = "grafana"
+  name       = "grafana"
+  version    = var.ver_chart_grafana
 
-  atomic = true
+  atomic          = true
   cleanup_on_fail = true
 }
 
 resource "helm_release" "configmap-reloader" {
   repository = "https://stakater.github.io/stakater-charts"
-  chart = "reloader"
-  name = "reloader"
+  chart      = "reloader"
+  name       = "reloader"
 
-  atomic = true
+  atomic          = true
   cleanup_on_fail = true
 }

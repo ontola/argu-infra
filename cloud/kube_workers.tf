@@ -1,19 +1,19 @@
-variable workers {
+variable "workers" {
   description = "Map of kubernetes workers."
   type = list(object({
-    service         = string
-    image_name      = string
-    component       = string
-    command         = list(string)
-    databases       = list(string)
+    service    = string
+    image_name = string
+    component  = string
+    command    = list(string)
+    databases  = list(string)
   }))
 
   default = [
     {
-      service = "apex"
-      component = "worker"
+      service    = "apex"
+      component  = "worker"
       image_name = "apex"
-      command = ["bundle", "exec", "sidekiq"]
+      command    = ["bundle", "exec", "sidekiq"]
       databases = [
         "elasticsearch",
         "postgresql",
@@ -22,10 +22,10 @@ variable workers {
       ]
     },
     {
-      service = "email"
-      component = "worker"
+      service    = "email"
+      component  = "worker"
       image_name = "email_service"
-      command = ["bundle", "exec", "sidekiq"]
+      command    = ["bundle", "exec", "sidekiq"]
       databases = [
         "postgresql",
         "redis",
@@ -33,10 +33,10 @@ variable workers {
       ]
     },
     {
-      service = "email"
-      component = "subscriber"
+      service    = "email"
+      component  = "subscriber"
       image_name = "email_service"
-      command = ["bundle", "exec", "rake", "broadcast:subscribe"]
+      command    = ["bundle", "exec", "rake", "broadcast:subscribe"]
       databases = [
         "postgresql",
         "redis",
@@ -44,10 +44,10 @@ variable workers {
       ]
     },
     {
-      service = "token"
-      component = "worker"
+      service    = "token"
+      component  = "worker"
       image_name = "token_service"
-      command = ["bundle", "exec", "sidekiq"]
+      command    = ["bundle", "exec", "sidekiq"]
       databases = [
         "postgresql",
         "redis",
@@ -58,34 +58,34 @@ variable workers {
 }
 
 resource "kubernetes_deployment" "worker-deployments" {
-  for_each = {for worker in var.workers:  "${worker.service}-${worker.component}" => worker}
+  for_each = { for worker in var.workers : "${worker.service}-${worker.component}" => worker }
 
   metadata {
     name = "${each.key}-dep"
     annotations = {
-      "service-name": each.value.service
-      "reloader.stakater.com/auto": "true"
+      "service-name" : each.value.service
+      "reloader.stakater.com/auto" : "true"
     }
   }
 
   spec {
     revision_history_limit = 2
-    replicas = var.cluster_env == "production" ? 0 : 1
+    replicas               = var.cluster_env == "production" ? 0 : 1
 
     selector {
       match_labels = {
-        app: var.application_name
-        tier: each.value.service
-        component: each.value.component
+        app : var.application_name
+        tier : each.value.service
+        component : each.value.component
       }
     }
 
     template {
       metadata {
         labels = {
-          app: var.application_name
-          tier: each.value.service
-          component: each.value.component
+          app : var.application_name
+          tier : each.value.service
+          component : each.value.component
         }
       }
       spec {
@@ -93,8 +93,8 @@ resource "kubernetes_deployment" "worker-deployments" {
           name = kubernetes_secret.container-registry-secret.metadata[0].name
         }
         container {
-          name = each.key
-          image = "${var.image_registry}/${var.image_registry_org}/${each.value.image_name}:${try(var.service_image_tag[each.value.service], var.image_tag)}"
+          name    = each.key
+          image   = "${var.image_registry}/${var.image_registry_org}/${each.value.image_name}:${try(var.service_image_tag[each.value.service], var.image_tag)}"
           command = each.value.command
 
           env_from {

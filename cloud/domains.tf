@@ -3,13 +3,13 @@ locals {
   full_base_domain = join("", [var.env_domain_prefix, var.base_domain])
 
   # Map of zone names to prefixed names
-  domains = var.cluster_env != "staging" ? {} : { for domain in var.automated_domains: domain =>  "${var.env_domain_prefix}${domain}" }
+  domains = var.cluster_env != "staging" ? {} : { for domain in var.automated_domains : domain => "${var.env_domain_prefix}${domain}" }
 }
 
 resource "aws_route53_delegation_set" "this" {}
 
 resource "aws_route53_zone" "this" {
-  for_each = local.domains
+  for_each          = local.domains
   delegation_set_id = aws_route53_delegation_set.this.id
 
   name = each.value
@@ -61,8 +61,8 @@ resource "aws_route53_record" "analytics" {
 
 locals {
   automated_domain_records = flatten(concat(
-      values(aws_route53_zone.this)[*].name,
-      values(aws_route53_record.www)[*].name,
-      values(aws_route53_record.analytics)[*].name,
+    values(aws_route53_zone.this)[*].name,
+    values(aws_route53_record.www)[*].name,
+    values(aws_route53_record.analytics)[*].name,
   ))
 }

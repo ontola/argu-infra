@@ -21,9 +21,9 @@ resource "kubernetes_job" "clear-cache" {
     template {
       metadata {
         labels = {
-          app: var.application_name
-          tier: local.job_cache_clear_service
-          component: "job"
+          app : var.application_name
+          tier : local.job_cache_clear_service
+          component : "job"
         }
       }
 
@@ -32,8 +32,8 @@ resource "kubernetes_job" "clear-cache" {
           name = kubernetes_secret.container-registry-secret.metadata[0].name
         }
         container {
-          name = "clear-cache-job"
-          image = "${var.image_registry}/${var.image_registry_org}/${var.services.apex.image_name}:${try(var.service_image_tag[local.job_cache_clear_service], var.image_tag)}"
+          name    = "clear-cache-job"
+          image   = "${var.image_registry}/${var.image_registry_org}/${var.services.apex.image_name}:${try(var.service_image_tag[local.job_cache_clear_service], var.image_tag)}"
           command = ["bundle", "exec", "rake", "cache:clear"]
 
 
@@ -94,16 +94,16 @@ resource "kubernetes_job" "migrate-apex" {
     template {
       metadata {
         labels = {
-          app: var.application_name
-          tier: local.job_cache_clear_service
-          component: "job"
+          app : var.application_name
+          tier : local.job_cache_clear_service
+          component : "job"
         }
       }
 
       spec {
         container {
-          name = "migrate-apex-job"
-          image = "${var.image_registry}/${var.image_registry_org}/${var.services.apex.image_name}:${try(var.service_image_tag[local.job_cache_clear_service], var.image_tag)}"
+          name    = "migrate-apex-job"
+          image   = "${var.image_registry}/${var.image_registry_org}/${var.services.apex.image_name}:${try(var.service_image_tag[local.job_cache_clear_service], var.image_tag)}"
           command = ["bundle", "exec", "rake", "db:migrate"]
 
 
