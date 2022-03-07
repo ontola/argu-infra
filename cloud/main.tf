@@ -11,7 +11,7 @@ terraform {
 
     digitalocean = {
       source = "digitalocean/digitalocean"
-      version = "~> 2.6.0"
+      version = "~> 2.17.1"
     }
 
     helm = {
@@ -21,12 +21,7 @@ terraform {
 
     kubernetes = {
       source = "hashicorp/kubernetes"
-      version = "~> 2.0.3"
-    }
-
-    kubernetes-alpha = {
-      source = "hashicorp/kubernetes-alpha"
-      version = "~> 0.3.2"
+      version = "~> 2.6.1"
     }
 
     random = {

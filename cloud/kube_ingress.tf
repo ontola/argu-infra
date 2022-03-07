@@ -51,8 +51,6 @@ locals {
 resource "kubernetes_manifest" "letsencrypt-staging-issuer" {
   count = var.letsencrypt_issuers == true ? 1 : 0
 
-  provider = kubernetes-alpha
-
   manifest = {
     apiVersion = "cert-manager.io/v1"
     kind = "ClusterIssuer"
@@ -93,8 +91,6 @@ resource "kubernetes_manifest" "letsencrypt-staging-issuer" {
 
 resource "kubernetes_manifest" "letsencrypt-prod-issuer" {
   count = var.letsencrypt_issuers == true ? 1 : 0
-
-  provider = kubernetes-alpha
 
   manifest = {
     apiVersion = "cert-manager.io/v1"
