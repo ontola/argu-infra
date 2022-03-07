@@ -20,7 +20,7 @@ resource "random_pet" "node_pool" {
 resource "digitalocean_kubernetes_cluster" "k8s-ams3-ontola-apex-1" {
   name    = local.cluster_name
   region  = var.do_region
-  version = var.cluster_env != "staging" ? "1.20.2-do.0" : "1.19.3-do.2"
+  version = var.cluster_env != "staging" ? "1.20.2-do.0" : "1.19.15-do.0"
   tags = [
     "argu-${var.cluster_env}",
     var.cluster_env,
@@ -59,7 +59,7 @@ resource "digitalocean_droplet" "haproxy" {
   monitoring         = true
   private_networking = true
   user_data = templatefile("${path.module}/config/haproxy_userdata.tpl", {
-    cluster_ipv4 = kubernetes_ingress.default-ingress.status[0].load_balancer[0].ingress[0].ip
+    cluster_ipv4 = data.digitalocean_loadbalancer.this.ip
   })
   ssh_keys = [
     digitalocean_ssh_key.this.fingerprint,
@@ -92,6 +92,22 @@ resource "helm_release" "nginx-ingress" {
   name       = "ingress-nginx"
   version    = var.ver_chart_nginx_ingress
 
+  set {
+    name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/do-loadbalancer-enable-proxy-protocol"
+    value = tostring("true")
+  }
+  set {
+    name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/do-loadbalancer-healthcheck-protocol"
+    value = "http"
+  }
+  set {
+    name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/do-loadbalancer-name"
+    value = local.cluster_name
+  }
+  set {
+    name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/do-loadbalancer-healthcheck-path"
+    value = kubernetes_deployment.default-http-backend.spec[0].template[0].spec[0].container[0].liveness_probe[0].http_get[0].path
+  }
   set {
     name  = "controller.config.add-headers"
     value = "${kubernetes_config_map.custom-headers.metadata[0].namespace}/${kubernetes_config_map.custom-headers.metadata[0].name}"

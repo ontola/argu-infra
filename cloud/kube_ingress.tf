@@ -205,3 +205,7 @@ resource "kubernetes_ingress" "default-ingress" {
     }
   }
 }
+
+data "digitalocean_loadbalancer" "this" {
+  name = local.cluster_name
+}
