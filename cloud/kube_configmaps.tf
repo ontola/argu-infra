@@ -74,6 +74,7 @@ resource "kubernetes_config_map" "wt-configmap-frontend" {
   data = {
     SERVER_REPORTING_KEY = var.env_frontend_server_bugsnag_key
     CLIENT_REPORTING_KEY = var.env_frontend_client_bugsnag_key
+    STUDIO_DOMAIN        = local.studio_domain
   }
 }
 

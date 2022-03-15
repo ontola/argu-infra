@@ -12,6 +12,8 @@ locals {
     ]
   ])
 
+  studio_domain = join("", [var.env_domain_prefix, "rdf.studio"])
+
   analytics_domains = flatten(concat(
     ["analytics.${local.full_base_domain}"],
     [for domain in var.managed_domains : "analytics.${join("", [var.env_domain_prefix, domain])}"],
@@ -30,6 +32,7 @@ locals {
     local.automated_domain_records,
     local.expanded_managed_domains,
     var.custom_simple_domains,
+    [local.studio_domain],
   ))
 
   ingress_tls_hosts = distinct(concat(
@@ -38,7 +41,8 @@ locals {
     local.expanded_managed_domains,
     local.analytics_domains,
     local.mailcatcher_domains,
-    var.custom_simple_domains
+    var.custom_simple_domains,
+    [local.studio_domain],
   ))
 
   used_issuer = (var.letsencrypt_issuers == true
