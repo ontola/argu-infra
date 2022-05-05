@@ -75,8 +75,8 @@ resource "kubernetes_secret" "wt-secret-apex" {
     JWT_ENCRYPTION_TOKEN = var.env_jwt_encryption_token
 
     SERVICE_TOKEN   = var.env_service_token
-    ARGU_APP_ID     = var.env_service_app_id
-    ARGU_APP_SECRET = var.env_service_app_secret
+    LIBRO_APP_ID     = var.env_service_app_id
+    LIBRO_APP_SECRET = var.env_service_app_secret
 
     BUGSNAG_KEY           = var.env_apex_bugsnag_key
     DEVISE_SECRET         = var.env_apex_devise_secret
@@ -103,8 +103,8 @@ resource "kubernetes_secret" "wt-secret-email" {
     JWT_ENCRYPTION_TOKEN = var.env_jwt_encryption_token
 
     SERVICE_TOKEN   = var.env_service_token
-    ARGU_APP_ID     = var.env_service_app_id
-    ARGU_APP_SECRET = var.env_service_app_secret
+    LIBRO_APP_ID     = var.env_service_app_id
+    LIBRO_APP_SECRET = var.env_service_app_secret
 
     BUGSNAG_KEY    = var.env_email_bugsnag_key
     MAILJET_KEY    = var.env_email_mailjet_key
@@ -142,8 +142,8 @@ resource "kubernetes_secret" "wt-secret-token" {
     JWT_ENCRYPTION_TOKEN = var.env_jwt_encryption_token
 
     SERVICE_TOKEN   = var.env_service_token
-    ARGU_APP_ID     = var.env_service_app_id
-    ARGU_APP_SECRET = var.env_service_app_secret
+    LIBRO_APP_ID     = var.env_service_app_id
+    LIBRO_APP_SECRET = var.env_service_app_secret
 
     BUGSNAG_KEY = var.env_token_bugsnag_key
   }
