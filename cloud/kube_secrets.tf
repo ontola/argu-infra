@@ -81,6 +81,10 @@ resource "kubernetes_secret" "wt-secret-apex" {
     BUGSNAG_KEY           = var.env_apex_bugsnag_key
     DEVISE_SECRET         = var.env_apex_devise_secret
     DEVISE_PEPPER         = var.env_apex_devise_pepper
+    DO_ACCESS_ID          = var.env_service_do_access_id
+    DO_ACCESS_SECRET      = var.env_service_do_access_secret
+    DO_SPACE_BUCKET       = var.env_service_do_space_bucket
+    DO_SPACE_ENDPOINT     = var.env_service_do_space_endpoint
     AWS_ID                = var.env_service_aws_id
     AWS_ACCESS_KEY_ID     = var.env_service_aws_id
     AWS_KEY               = var.env_service_aws_key

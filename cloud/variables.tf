@@ -388,6 +388,22 @@ variable "env_service_aws_bucket" {
   type = string
 }
 
+variable "env_service_do_access_id" {
+  type = string
+}
+
+variable "env_service_do_access_secret" {
+  type = string
+}
+
+variable "env_service_do_space_bucket" {
+  type = string
+}
+
+variable "env_service_do_space_endpoint" {
+  type = string
+}
+
 variable "env_service_facebook_key" {
   type = string
 }
