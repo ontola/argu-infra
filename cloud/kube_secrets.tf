@@ -127,6 +127,9 @@ resource "kubernetes_secret" "wt-secret-frontend" {
     SESSION_SECRET       = var.env_secret_key_base
     JWT_ENCRYPTION_TOKEN = var.env_jwt_encryption_token
 
+    EMAIL_SERVICE_URL   = var.env_email_service_url
+    TOKEN_SERVICE_URL   = var.env_token_service_url
+
     LIBRO_CLIENT_ID     = var.env_service_app_id
     LIBRO_CLIENT_SECRET = var.env_service_app_secret
     MAPBOX_USERNAME     = var.env_frontend_mapbox_username

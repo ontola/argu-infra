@@ -394,6 +394,7 @@ variable "env_service_do_access_id" {
 
 variable "env_service_do_access_secret" {
   type = string
+  sensitive   = true
 }
 
 variable "env_service_do_space_bucket" {
@@ -451,6 +452,10 @@ variable "env_email_mailjet_secret" {
   default = ""
 }
 
+variable "env_email_service_url" {
+  type    = string
+}
+
 ### Env - Secrets - Service specific - frontend
 
 variable "env_frontend_server_bugsnag_key" {
@@ -473,6 +478,10 @@ variable "env_frontend_mapbox_key" {
 
 variable "env_token_bugsnag_key" {
   type = string
+}
+
+variable "env_token_service_url" {
+  type    = string
 }
 
 ## Other env - service specific
