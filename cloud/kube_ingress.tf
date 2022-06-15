@@ -151,7 +151,6 @@ resource "kubernetes_ingress" "default-ingress" {
     name = "default-ingress"
     annotations = {
       "cert-manager.io/cluster-issuer" : local.used_issuer
-      "acme.cert-manager.io/http01-edit-in-place" : "true"
       "service.beta.kubernetes.io/do-loadbalancer-healthcheck-path" : kubernetes_deployment.default-http-backend.spec[0].template[0].spec[0].container[0].liveness_probe[0].http_get[0].path
       "service.beta.kubernetes.io/do-loadbalancer-healthcheck-protocol" : "http"
       "service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol" : "true"
