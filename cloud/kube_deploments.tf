@@ -25,7 +25,6 @@ variable "services" {
         "elasticsearch",
         "postgresql",
         "redis",
-        "rabbitmq",
       ]
     }
     frontend = {
@@ -49,7 +48,6 @@ variable "services" {
       databases = [
         "postgresql",
         "redis",
-        "rabbitmq",
       ]
     }
     token = {
@@ -62,7 +60,6 @@ variable "services" {
       databases = [
         "postgresql",
         "redis",
-        "rabbitmq",
       ]
     }
     matomo = {

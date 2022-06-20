@@ -300,13 +300,6 @@ variable "env_mysql_admin_password" {
   sensitive = true
 }
 
-### Env - Databases - Rabbitmq
-
-variable "env_rabbitmq_port" {
-  type    = string
-  default = "5672"
-}
-
 ### Env - Databases - Redis
 
 variable "env_redis_address" {
@@ -524,10 +517,6 @@ variable "ver_chart_prometheus" {
   https://github.com/bitnami/charts/tree/master/bitnami/kube-prometheus/
   https://github.com/bitnami/charts/tree/master/bitnami/kube-prometheus/#upgrading
   EOT
-  type        = string
-}
-variable "ver_chart_rabbitmq" {
-  description = "https://artifacthub.io/packages/helm/bitnami/rabbitmq"
   type        = string
 }
 

@@ -18,7 +18,6 @@ variable "workers" {
         "elasticsearch",
         "postgresql",
         "redis",
-        "rabbitmq",
       ]
     },
     {
@@ -29,7 +28,6 @@ variable "workers" {
       databases = [
         "postgresql",
         "redis",
-        "rabbitmq",
       ]
     },
     {
@@ -40,7 +38,6 @@ variable "workers" {
       databases = [
         "postgresql",
         "redis",
-        "rabbitmq",
       ]
     },
     {
@@ -51,7 +48,6 @@ variable "workers" {
       databases = [
         "postgresql",
         "redis",
-        "rabbitmq",
       ]
     },
   ]

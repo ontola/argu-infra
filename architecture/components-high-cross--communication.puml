@@ -19,7 +19,6 @@ folder server {
     component token
 
     queue redis as "redis: invalidations"
-    queue rabbitmq
 
     interface "Bulk\nAuthorize" as authorize
     interface "Bulk\nAPI" as bulkint
@@ -41,13 +40,9 @@ libro -- apex : WebManifest
 libro - bulkint : preload
 bulkint --> cache
 
-apex <--> rabbitmq
 apex --> redis : pub
 
 cache <-- redis : sub
-
-email <--> rabbitmq
-token <--> rabbitmq
 
 ' Styling
 libro - cache
