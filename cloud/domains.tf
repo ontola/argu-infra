@@ -23,7 +23,7 @@ resource "aws_route53_record" "apex_a" {
   type    = "A"
   ttl     = 60
   records = [
-    kubernetes_ingress.default-ingress.status[0].load_balancer[0].ingress[0].ip
+    kubernetes_ingress_v1.default-ingress.status[0].load_balancer[0].ingress[0].ip
   ]
 }
 

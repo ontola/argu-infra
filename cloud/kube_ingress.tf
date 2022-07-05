@@ -144,7 +144,7 @@ resource "kubernetes_config_map" "custom-headers" {
   }
 }
 
-resource "kubernetes_ingress" "default-ingress" {
+resource "kubernetes_ingress_v1" "default-ingress" {
   wait_for_load_balancer = true
 
   metadata {
@@ -156,13 +156,18 @@ resource "kubernetes_ingress" "default-ingress" {
       "service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol" : "true"
       "nginx.ingress.kubernetes.io/server-alias" : join(",", local.website_domains)
       "nginx.ingress.kubernetes.io/whitelist-source-range" : var.ip_whitelist
+      "kubernetes.io/ingress.class": "nginx"
     }
   }
 
   spec {
-    backend {
-      service_name = kubernetes_deployment.default-http-backend.metadata[0].name
-      service_port = "80"
+    default_backend {
+      service {
+        name = kubernetes_deployment.default-http-backend.metadata[0].name
+        port {
+          number = "80"
+        }
+      }
     }
 
     dynamic "rule" {
@@ -175,8 +180,12 @@ resource "kubernetes_ingress" "default-ingress" {
           path {
             path = "/"
             backend {
-              service_name = kubernetes_service.service-mailcatcher[0].metadata[0].name
-              service_port = kubernetes_service.service-mailcatcher[0].spec[0].port[0].port
+              service {
+                name = kubernetes_service.service-mailcatcher[0].metadata[0].name
+                port {
+                  number = kubernetes_service.service-mailcatcher[0].spec[0].port[0].port
+                }
+              }
             }
           }
         }
@@ -193,8 +202,12 @@ resource "kubernetes_ingress" "default-ingress" {
           path {
             path = "/"
             backend {
-              service_name = "frontend"
-              service_port = var.services.frontend.port
+              service {
+                name = "frontend"
+                port {
+                  number = var.services.frontend.port
+                }
+              }
             }
           }
         }
