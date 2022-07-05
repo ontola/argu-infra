@@ -154,6 +154,13 @@ resource "kubernetes_ingress_v1" "default-ingress" {
       "service.beta.kubernetes.io/do-loadbalancer-healthcheck-path" : kubernetes_deployment.default-http-backend.spec[0].template[0].spec[0].container[0].liveness_probe[0].http_get[0].path
       "service.beta.kubernetes.io/do-loadbalancer-healthcheck-protocol" : "http"
       "service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol" : "true"
+      "nginx.ingress.kubernetes.io/body-size" : "1024m"
+      "nginx.ingress.kubernetes.io/client-body-buffer-size" : "50m"
+      "nginx.ingress.kubernetes.io/client-max-body-size" : "50m"
+      "nginx.ingress.kubernetes.io/proxy-body-size" : "1024m"
+      "nginx.ingress.kubernetes.io/proxy-buffers-number" : 8
+      "nginx.ingress.kubernetes.io/proxy-buffer-size" : "1024m"
+      "nginx.ingress.kubernetes.io/proxy-max-temp-file-size" : "1024m"
       "nginx.ingress.kubernetes.io/server-alias" : join(",", local.website_domains)
       "nginx.ingress.kubernetes.io/whitelist-source-range" : var.ip_whitelist
       "kubernetes.io/ingress.class": "nginx"
