@@ -15,7 +15,7 @@ variable "services" {
 
   default = {
     apex = {
-      service_name   = "argu"
+      service_name   = "apex"
       image_name     = "apex"
       container_port = 3000
       port           = 3000
