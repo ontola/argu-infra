@@ -29,7 +29,7 @@ variable "services" {
     }
     frontend = {
       service_name   = "frontend"
-      image_name     = "libro"
+      image_name     = "argu/libro"
       container_port = 3080
       port           = 80
       replicas       = 2

@@ -23,7 +23,8 @@ resource "kubernetes_config_map" "wt-configmap-env" {
     RAILS_ENV             = var.env_rails_env
     LOG_LEVEL             = var.env_generic_log_level
     HOSTNAME              = join("", [var.env_domain_prefix, var.base_domain])
-    ARGU_API_URL          = "http://${kubernetes_service.service-services[local.data_provider_service].metadata[0].name}.${local.app_domain_base}:${kubernetes_service.service-services[local.data_provider_service].spec[0].port[0].target_port}"
+    SERVICE_DNS_PREFIX    = join(".", [var.app_namespace, "svc"])
+    DATA_SERVICE_NAME     = kubernetes_service.service-services[local.data_provider_service].metadata[0].name
     FRONTEND_SERVICE_PORT = var.services.frontend.port
   }
 }
