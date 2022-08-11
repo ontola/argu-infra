@@ -21,26 +21,6 @@ variable "workers" {
       ]
     },
     {
-      service    = "email"
-      component  = "worker"
-      image_name = "email_service"
-      command    = ["bundle", "exec", "sidekiq"]
-      databases = [
-        "postgresql",
-        "redis",
-      ]
-    },
-    {
-      service    = "email"
-      component  = "subscriber"
-      image_name = "email_service"
-      command    = ["bundle", "exec", "rake", "broadcast:subscribe"]
-      databases = [
-        "postgresql",
-        "redis",
-      ]
-    },
-    {
       service    = "token"
       component  = "worker"
       image_name = "token_service"
