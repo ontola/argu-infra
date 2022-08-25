@@ -6,6 +6,7 @@ variable "services" {
     image_name     = optional(string)
     command        = optional(list(string))
     container_port = number
+    migrate        = bool
     port           = number
     replicas       = number
     scrape         = bool
@@ -18,6 +19,7 @@ variable "services" {
       service_name   = "apex"
       image_name     = "apex"
       container_port = 3000
+      migrate        = true
       port           = 3000
       replicas       = 1
       scrape         = false
@@ -31,6 +33,7 @@ variable "services" {
       service_name   = "frontend"
       image_name     = "argu/libro"
       container_port = 3080
+      migrate        = false
       port           = 80
       replicas       = 2
       scrape         = false
@@ -42,6 +45,7 @@ variable "services" {
       service_name   = "email"
       image_name     = "email_service"
       container_port = 3000
+      migrate        = true
       port           = 3000
       replicas       = 1
       scrape         = false
@@ -54,6 +58,7 @@ variable "services" {
       service_name   = "token"
       image_name     = "token_service"
       container_port = 3000
+      migrate        = true
       port           = 3000
       replicas       = 1
       scrape         = false
@@ -66,6 +71,7 @@ variable "services" {
       service_name   = "matomo"
       override_image = "matomo:3-apache"
       container_port = 80
+      migrate        = false
       port           = 80
       replicas       = 1
       scrape         = false
