@@ -420,14 +420,6 @@ variable "env_apex_devise_pepper" {
   sensitive = true
 }
 
-variable "env_service_apex_nominatim_url" {
-  type = string
-}
-
-variable "env_service_apex_nominatim_key" {
-  type = string
-}
-
 ### Env - Secrets - Service specific - email
 
 variable "env_email_bugsnag_key" {
