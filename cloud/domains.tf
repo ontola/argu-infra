@@ -3,66 +3,64 @@ locals {
   full_base_domain = join("", [var.env_domain_prefix, var.base_domain])
 
   # Map of zone names to prefixed names
-  domains = var.cluster_env != "staging" ? {} : { for domain in var.automated_domains : domain => "${var.env_domain_prefix}${domain}" }
+  domains = (var.cluster_env != "staging"
+    ? { for domain in var.managed_domains : domain => domain }
+    : { for domain in var.managed_domains : domain => "${var.env_domain_prefix}${domain}" }
+  )
 }
 
-resource "aws_route53_delegation_set" "this" {}
-
-resource "aws_route53_zone" "this" {
-  for_each          = local.domains
-  delegation_set_id = aws_route53_delegation_set.this.id
+resource "digitalocean_domain" "this" {
+  for_each = local.domains
 
   name = each.value
 }
 
-resource "aws_route53_record" "apex_a" {
+resource "digitalocean_record" "root" {
   for_each = local.domains
 
-  zone_id = aws_route53_zone.this[each.key].zone_id
-  name    = each.value
-  type    = "A"
-  ttl     = 60
-  records = [
-    kubernetes_ingress_v1.default-ingress.status[0].load_balancer[0].ingress[0].ip
-  ]
+  domain = digitalocean_domain.this[each.key].id
+  type   = "A"
+  name   = "@"
+  ttl    = 60
+  value  = data.digitalocean_loadbalancer.this.ip
 }
 
-resource "aws_route53_record" "apex_aaaa" {
+resource "digitalocean_record" "caa" {
   for_each = local.domains
 
-  zone_id = aws_route53_zone.this[each.key].zone_id
-  name    = each.value
-  type    = "AAAA"
-  ttl     = 60
-  records = [
-    digitalocean_droplet.haproxy.ipv6_address
-  ]
+  domain = digitalocean_domain.this[each.key].id
+  type   = "CAA"
+  name   = "@"
+  ttl    = 60
+  flags  = 0
+  tag    = "issue"
+  value  = "letsencrypt.org."
 }
 
-resource "aws_route53_record" "www" {
+resource "digitalocean_record" "www" {
   for_each = local.domains
 
-  zone_id = aws_route53_zone.this[each.key].zone_id
-  name    = format("www.%s", each.value)
-  type    = "CNAME"
-  ttl     = 60
-  records = [each.value]
+  domain = digitalocean_domain.this[each.key].id
+  type   = "CNAME"
+  name   = "www"
+  ttl    = 60
+  value  = "demogemeente.nl."
 }
 
-resource "aws_route53_record" "analytics" {
+resource "digitalocean_record" "analytics" {
   for_each = local.domains
 
-  zone_id = aws_route53_zone.this[each.key].zone_id
-  name    = format("%s.%s", var.analytics_subdomain, each.value)
-  type    = "CNAME"
-  ttl     = 60
-  records = [each.value]
+  domain = digitalocean_domain.this[each.key].id
+  type   = "CNAME"
+  name   = var.analytics_subdomain
+  ttl    = 60
+  value  = format("%s.", each.value)
 }
 
 locals {
   automated_domain_records = flatten(concat(
-    values(aws_route53_zone.this)[*].name,
-    values(aws_route53_record.www)[*].name,
-    values(aws_route53_record.analytics)[*].name,
+    values(digitalocean_record.root)[*].fqdn,
+    values(digitalocean_record.www)[*].fqdn,
+    values(digitalocean_record.analytics)[*].fqdn,
   ))
 }

@@ -51,15 +51,9 @@ variable "analytics_subdomain" {
   default = "analytics"
 }
 
-variable "automated_domains" {
-  type        = list(string)
-  description = "Domains owned by us, managed by the infrastructure. Don't prefix since env_domain_prefix is honored"
-  default     = []
-}
-
 variable "managed_domains" {
   type        = list(string)
-  description = "Domains owned by us, managed manually, should have correct DNS settings for all (sub)domains"
+  description = "Domains owned by us, registered manually, managed via terraform."
   default     = []
 }
 
@@ -386,8 +380,8 @@ variable "env_service_do_access_id" {
 }
 
 variable "env_service_do_access_secret" {
-  type = string
-  sensitive   = true
+  type      = string
+  sensitive = true
 }
 
 variable "env_service_do_space_bucket" {
@@ -438,7 +432,7 @@ variable "env_email_mailjet_secret" {
 }
 
 variable "env_email_service_url" {
-  type    = string
+  type = string
 }
 
 ### Env - Secrets - Service specific - frontend
@@ -466,7 +460,7 @@ variable "env_token_bugsnag_key" {
 }
 
 variable "env_token_service_url" {
-  type    = string
+  type = string
 }
 
 ## Other env - service specific

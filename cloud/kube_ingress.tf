@@ -29,7 +29,6 @@ locals {
 
   website_domains = distinct(concat(
     local.full_base_and_subdomains,
-    local.automated_domain_records,
     local.expanded_managed_domains,
     var.custom_simple_domains,
     [local.studio_domain],
@@ -37,7 +36,6 @@ locals {
 
   ingress_tls_hosts = distinct(concat(
     local.full_base_and_subdomains,
-    local.automated_domain_records,
     local.expanded_managed_domains,
     local.analytics_domains,
     local.mailcatcher_domains,
@@ -163,7 +161,7 @@ resource "kubernetes_ingress_v1" "default-ingress" {
       "nginx.ingress.kubernetes.io/proxy-max-temp-file-size" : "1024m"
       "nginx.ingress.kubernetes.io/server-alias" : join(",", local.website_domains)
       "nginx.ingress.kubernetes.io/whitelist-source-range" : var.ip_whitelist
-      "kubernetes.io/ingress.class": "nginx"
+      "kubernetes.io/ingress.class" : "nginx"
     }
   }
 
