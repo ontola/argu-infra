@@ -6,32 +6,32 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 3.18.0"
+      version = "~> 4.28.0"
     }
 
     digitalocean = {
       source  = "digitalocean/digitalocean"
-      version = "~> 2.17.1"
+      version = "~> 2.22.1"
     }
 
     helm = {
       source  = "hashicorp/helm"
-      version = "~> 2.4.1"
+      version = "~> 2.6.0"
     }
 
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "~> 2.8.0"
+      version = "~> 2.13.1"
     }
 
     random = {
       source  = "hashicorp/random"
-      version = "~> 3.1.0"
+      version = "~> 3.3.2"
     }
 
     tls = {
       source  = "hashicorp/tls"
-      version = "~> 3.1.0"
+      version = "~> 4.0.1"
     }
   }
 
