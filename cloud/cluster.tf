@@ -53,25 +53,6 @@ resource "digitalocean_ssh_key" "this" {
   public_key = tls_private_key.this.public_key_openssh
 }
 
-resource "digitalocean_droplet" "haproxy" {
-  name   = var.cluster_env != "staging" ? "haproxy-${var.cluster_env}-${random_pet.tfc_refresh.id}" : "haproxy-${random_pet.tfc_refresh.id}"
-  image  = "ubuntu-20-04-x64"
-  size   = "s-1vcpu-1gb"
-  region = var.do_region
-
-  ipv6               = true
-  monitoring         = true
-  private_networking = true
-  user_data = templatefile("${path.module}/config/haproxy_userdata.tpl", {
-    cluster_ipv4 = data.digitalocean_loadbalancer.this.ip
-  })
-  ssh_keys = [
-    digitalocean_ssh_key.this.fingerprint,
-    data.terraform_remote_state.shared.outputs.ssh_key_archer.fingerprint,
-    data.terraform_remote_state.shared.outputs.ssh_key_archer_rsa.fingerprint,
-  ]
-}
-
 resource "kubernetes_secret" "container-registry-secret" {
   metadata {
     name = "container-registry-secret"
