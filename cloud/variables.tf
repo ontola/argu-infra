@@ -103,6 +103,11 @@ variable "application_name" {
   default = "webtools"
 }
 
+variable "enable_prometheus" {
+  type    = bool
+  default = false
+}
+
 variable "enable_mailcatcher" {
   type    = bool
   default = false

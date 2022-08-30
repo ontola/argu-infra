@@ -11,6 +11,12 @@ locals {
   ]
 
   cluster_name = var.cluster_env != "staging" ? "k8s-${var.do_region}-${var.organization}-${var.cluster_env}-${var.cluster_version}" : "k8s-ams3-ontola-2"
+
+  prometheus_name = (
+    var.enable_prometheus
+    ? { key = kubernetes_secret.prometheus-config[0].metadata[0].name }
+    : {}
+  )
 }
 
 resource "random_pet" "node_pool" {
@@ -171,6 +177,8 @@ resource "helm_release" "elasticsearch" {
 }
 
 resource "kubernetes_secret" "prometheus-config" {
+  count = var.enable_prometheus ? 1 : 0
+
   metadata {
     name      = "prometheus-config"
     namespace = "default"
@@ -182,6 +190,8 @@ resource "kubernetes_secret" "prometheus-config" {
 }
 
 resource "helm_release" "prometheus" {
+  count = var.enable_prometheus ? 1 : 0
+
   repository = "https://charts.bitnami.com/bitnami"
   chart      = "kube-prometheus"
   name       = "prometheus"
@@ -198,10 +208,6 @@ resource "helm_release" "prometheus" {
     value = "external"
   }
   set {
-    name  = "prometheus.additionalScrapeConfigs.external.name"
-    value = kubernetes_secret.prometheus-config.metadata[0].name
-  }
-  set {
     name  = "prometheus.additionalScrapeConfigs.external.key"
     value = "prometheus.yml"
   }
@@ -209,9 +215,19 @@ resource "helm_release" "prometheus" {
     name  = "prometheus.enableAdminAPI"
     value = "true"
   }
+  dynamic "set" {
+    for_each = local.prometheus_name
+
+    content {
+      name  = "prometheus.additionalScrapeConfigs.external.name"
+      value = set.value
+    }
+  }
 }
 
 resource "helm_release" "grafana" {
+  count = var.enable_prometheus ? 1 : 0
+
   repository = "https://charts.bitnami.com/bitnami"
   chart      = "grafana"
   name       = "grafana"

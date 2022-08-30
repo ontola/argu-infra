@@ -39,7 +39,7 @@ resource "kubernetes_config_map" "wt-configmap-apex" {
     RAILS_MAX_THREADS : "15"
     INT_IP_WHITELIST : "10.244.0.0/16"
     AWS_REGION : var.aws_region
-    DISABLE_PROMETHEUS : var.cluster_env != "staging" ? "true" : "false"
+    DISABLE_PROMETHEUS : var.enable_prometheus ? "false" : "true"
   }
 }
 
