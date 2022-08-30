@@ -342,11 +342,6 @@ variable "env_elasticsearch_url" {
 
 ### Env - Secrets - General
 
-variable "env_rails_oauth_token" {
-  type      = string
-  sensitive = true
-}
-
 variable "env_service_token" {
   type      = string
   sensitive = true
@@ -363,15 +358,6 @@ variable "env_secret_token" {
 }
 
 variable "env_jwt_encryption_token" {
-  type      = string
-  sensitive = true
-}
-
-variable "env_service_app_id" {
-  type = string
-}
-
-variable "env_service_app_secret" {
   type      = string
   sensitive = true
 }

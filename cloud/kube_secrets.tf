@@ -73,11 +73,9 @@ resource "kubernetes_secret" "wt-secret-apex" {
   data = {
     SECRET_KEY_BASE      = var.env_secret_key_base
     SECRET_TOKEN         = var.env_secret_token
-    JWT_ENCRYPTION_TOKEN = var.env_jwt_encryption_token
+    JWT_ENCRYPTION_TOKEN = local.jwt_encryption_token
 
     SERVICE_TOKEN    = var.env_service_token
-    LIBRO_APP_ID     = var.env_service_app_id
-    LIBRO_APP_SECRET = var.env_service_app_secret
 
     BUGSNAG_KEY           = var.env_apex_bugsnag_key
     DEVISE_SECRET         = var.env_apex_devise_secret
@@ -104,11 +102,9 @@ resource "kubernetes_secret" "wt-secret-email" {
   data = {
     SECRET_KEY_BASE      = var.env_secret_key_base
     SECRET_TOKEN         = var.env_secret_token
-    JWT_ENCRYPTION_TOKEN = var.env_jwt_encryption_token
+    JWT_ENCRYPTION_TOKEN = local.jwt_encryption_token
 
     SERVICE_TOKEN    = var.env_service_token
-    LIBRO_APP_ID     = var.env_service_app_id
-    LIBRO_APP_SECRET = var.env_service_app_secret
 
     BUGSNAG_KEY    = var.env_email_bugsnag_key
     MAILJET_KEY    = var.env_email_mailjet_key
@@ -123,15 +119,12 @@ resource "kubernetes_secret" "wt-secret-frontend" {
   type = "Opaque"
 
   data = {
-    RAILS_OAUTH_TOKEN    = var.env_rails_oauth_token
     SESSION_SECRET       = var.env_secret_key_base
-    JWT_ENCRYPTION_TOKEN = var.env_jwt_encryption_token
+    JWT_ENCRYPTION_TOKEN = local.jwt_encryption_token
 
     EMAIL_SERVICE_URL = var.env_email_service_url
     TOKEN_SERVICE_URL = var.env_token_service_url
 
-    LIBRO_CLIENT_ID     = var.env_service_app_id
-    LIBRO_CLIENT_SECRET = var.env_service_app_secret
     MAPBOX_USERNAME     = var.env_frontend_mapbox_username
     MAPBOX_KEY          = var.env_frontend_mapbox_key
   }
@@ -146,11 +139,9 @@ resource "kubernetes_secret" "wt-secret-token" {
   data = {
     SECRET_KEY_BASE      = var.env_secret_key_base
     SECRET_TOKEN         = var.env_secret_token
-    JWT_ENCRYPTION_TOKEN = var.env_jwt_encryption_token
+    JWT_ENCRYPTION_TOKEN = local.jwt_encryption_token
 
     SERVICE_TOKEN    = var.env_service_token
-    LIBRO_APP_ID     = var.env_service_app_id
-    LIBRO_APP_SECRET = var.env_service_app_secret
 
     BUGSNAG_KEY = var.env_token_bugsnag_key
   }
