@@ -475,15 +475,18 @@ variable "env_token_service_url" {
 ## Other env - service specific
 
 variable "env_apex_postgresql_database" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "env_email_postgresql_database" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "env_token_postgresql_database" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "env_matomo_mysql_database" {

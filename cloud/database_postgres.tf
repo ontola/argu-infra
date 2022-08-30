@@ -40,3 +40,18 @@ resource "digitalocean_database_firewall" "postgres" {
     value = "k8s-dexpods-${var.cluster_env}"
   }
 }
+
+resource "digitalocean_database_db" "apex" {
+  cluster_id = digitalocean_database_cluster.postgres.id
+  name       = "apex_${var.cluster_env}"
+}
+
+resource "digitalocean_database_db" "email" {
+  cluster_id = digitalocean_database_cluster.postgres.id
+  name       = "email_${var.cluster_env}"
+}
+
+resource "digitalocean_database_db" "token" {
+  cluster_id = digitalocean_database_cluster.postgres.id
+  name       = "token_${var.cluster_env}"
+}
