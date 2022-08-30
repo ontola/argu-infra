@@ -255,19 +255,23 @@ variable "env_generic_matomo_database_enable_ssl" {
 ### Env - Databases - Postgres
 
 variable "env_postgresql_address" {
-  type = string
+  type    = string
+  default = null
 }
 
 variable "env_postgresql_port" {
-  type = string
+  type    = string
+  default = null
 }
 
 variable "env_postgresql_username" {
-  type = string
+  type    = string
+  default = null
 }
 
 variable "env_postgresql_password" {
   type      = string
+  default   = null
   sensitive = true
 }
 
@@ -297,24 +301,29 @@ variable "env_mysql_admin_password" {
 ### Env - Databases - Redis
 
 variable "env_redis_address" {
-  type = string
+  type    = string
+  default = null
 }
 
 variable "env_redis_username" {
-  type = string
+  type    = string
+  default = null
 }
 
 variable "env_redis_password" {
   type      = string
+  default   = null
   sensitive = true
 }
 
 variable "env_redis_port" {
-  type = string
+  type    = string
+  default = null
 }
 
 variable "env_redis_ssl" {
-  type = string
+  type    = string
+  default = true
 }
 
 ### Env - Databases - Elasticsearch

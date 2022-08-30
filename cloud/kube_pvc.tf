@@ -1,4 +1,3 @@
-
 resource "kubernetes_persistent_volume_claim" "wt-volume-claim-matomo-html" {
   metadata {
     name = "wt-volume-claim-matomo-html"

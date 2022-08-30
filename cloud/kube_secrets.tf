@@ -1,3 +1,15 @@
+locals {
+  postgresql_address  = coalesce(var.env_postgresql_address, digitalocean_database_cluster.postgres.private_host)
+  postgresql_port     = coalesce(var.env_postgresql_port, digitalocean_database_cluster.postgres.port)
+  postgresql_username = coalesce(var.env_postgresql_username, digitalocean_database_cluster.postgres.user)
+  postgresql_password = coalesce(var.env_postgresql_password, digitalocean_database_cluster.postgres.password)
+
+  redis_address  = coalesce(var.env_redis_address, digitalocean_database_cluster.redis.private_host)
+  redis_port     = coalesce(var.env_redis_port, digitalocean_database_cluster.redis.port)
+  redis_username = coalesce(var.env_redis_username, digitalocean_database_cluster.redis.user)
+  redis_password = coalesce(var.env_redis_password, digitalocean_database_cluster.redis.password)
+}
+
 # Databases
 
 resource "kubernetes_secret" "wt-secret-db-elasticsearch" {
@@ -16,11 +28,11 @@ resource "kubernetes_secret" "wt-secret-db-postgresql" {
   }
 
   data = {
-    POSTGRESQL_ADDRESS  = var.env_postgresql_address
-    POSTGRESQL_PORT     = var.env_postgresql_port
-    POSTGRESQL_USERNAME = var.env_postgresql_username
-    POSTGRESQL_PASSWORD = var.env_postgresql_password
-    POSTGRESQL_URL      = "postgres://${var.env_postgresql_username}:${var.env_postgresql_password}@${var.env_postgresql_address}:${var.env_postgresql_port}"
+    POSTGRESQL_ADDRESS  = local.postgresql_address
+    POSTGRESQL_PORT     = local.postgresql_port
+    POSTGRESQL_USERNAME = local.postgresql_username
+    POSTGRESQL_PASSWORD = local.postgresql_password
+    POSTGRESQL_URL      = "postgres://${local.postgresql_username}:${local.postgresql_password}@${local.postgresql_address}:${local.postgresql_port}"
   }
 }
 
@@ -41,12 +53,12 @@ resource "kubernetes_secret" "wt-secret-db-redis" {
   }
 
   data = {
-    REDIS_ADDRESS  = var.env_redis_address
-    REDIS_PORT     = var.env_redis_port
-    REDIS_URL      = "rediss://${var.env_redis_username}:${var.env_redis_password}@${var.env_redis_address}:${var.env_redis_port}"
-    REDIS_USERNAME = var.env_redis_username
-    REDIS_PASSWORD = var.env_redis_password
+    REDIS_ADDRESS  = local.redis_address
+    REDIS_PORT     = local.redis_port
+    REDIS_USERNAME = local.redis_username
+    REDIS_PASSWORD = local.redis_password
     REDIS_SSL      = var.env_redis_ssl
+    REDIS_URL      = "rediss://${local.redis_username}:${local.redis_password}@${local.redis_address}:${local.redis_port}"
   }
 }
 
@@ -63,7 +75,7 @@ resource "kubernetes_secret" "wt-secret-apex" {
     SECRET_TOKEN         = var.env_secret_token
     JWT_ENCRYPTION_TOKEN = var.env_jwt_encryption_token
 
-    SERVICE_TOKEN   = var.env_service_token
+    SERVICE_TOKEN    = var.env_service_token
     LIBRO_APP_ID     = var.env_service_app_id
     LIBRO_APP_SECRET = var.env_service_app_secret
 
@@ -94,7 +106,7 @@ resource "kubernetes_secret" "wt-secret-email" {
     SECRET_TOKEN         = var.env_secret_token
     JWT_ENCRYPTION_TOKEN = var.env_jwt_encryption_token
 
-    SERVICE_TOKEN   = var.env_service_token
+    SERVICE_TOKEN    = var.env_service_token
     LIBRO_APP_ID     = var.env_service_app_id
     LIBRO_APP_SECRET = var.env_service_app_secret
 
@@ -115,8 +127,8 @@ resource "kubernetes_secret" "wt-secret-frontend" {
     SESSION_SECRET       = var.env_secret_key_base
     JWT_ENCRYPTION_TOKEN = var.env_jwt_encryption_token
 
-    EMAIL_SERVICE_URL   = var.env_email_service_url
-    TOKEN_SERVICE_URL   = var.env_token_service_url
+    EMAIL_SERVICE_URL = var.env_email_service_url
+    TOKEN_SERVICE_URL = var.env_token_service_url
 
     LIBRO_CLIENT_ID     = var.env_service_app_id
     LIBRO_CLIENT_SECRET = var.env_service_app_secret
@@ -136,7 +148,7 @@ resource "kubernetes_secret" "wt-secret-token" {
     SECRET_TOKEN         = var.env_secret_token
     JWT_ENCRYPTION_TOKEN = var.env_jwt_encryption_token
 
-    SERVICE_TOKEN   = var.env_service_token
+    SERVICE_TOKEN    = var.env_service_token
     LIBRO_APP_ID     = var.env_service_app_id
     LIBRO_APP_SECRET = var.env_service_app_secret
 
