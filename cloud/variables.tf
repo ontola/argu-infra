@@ -349,16 +349,19 @@ variable "env_service_token" {
 
 variable "env_secret_key_base" {
   type      = string
+  default   = null
   sensitive = true
 }
 
 variable "env_secret_token" {
   type      = string
+  default   = null
   sensitive = true
 }
 
 variable "env_jwt_encryption_token" {
   type      = string
+  default   = null
   sensitive = true
 }
 
@@ -406,11 +409,13 @@ variable "env_apex_bugsnag_key" {
 
 variable "env_apex_devise_secret" {
   type      = string
+  default   = null
   sensitive = true
 }
 
 variable "env_apex_devise_pepper" {
   type      = string
+  default   = null
   sensitive = true
 }
 
