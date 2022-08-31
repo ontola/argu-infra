@@ -28,7 +28,7 @@ resource "random_pet" "node_pool" {
 resource "digitalocean_kubernetes_cluster" "k8s-ams3-ontola-apex-1" {
   name    = local.cluster_name
   region  = var.do_region
-  version = var.cluster_env != "staging" ? "1.20.2-do.0" : "1.23.9-do.0"
+  version = var.cluster_env != "staging" ? "1.23.9-do.0" : "1.23.9-do.0"
   tags = [
     "argu-${var.cluster_env}",
     var.cluster_env,
