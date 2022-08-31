@@ -312,7 +312,7 @@ variable "env_redis_address" {
 
 variable "env_redis_username" {
   type    = string
-  default = null
+  default = "default"
 }
 
 variable "env_redis_password" {

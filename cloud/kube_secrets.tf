@@ -71,8 +71,8 @@ resource "kubernetes_secret" "wt-secret-apex" {
   type = "Opaque"
 
   data = {
-    SECRET_KEY_BASE      = var.env_secret_key_base
-    SECRET_TOKEN         = var.env_secret_token
+    SECRET_KEY_BASE      = local.secret_key_base
+    SECRET_TOKEN         = local.secret_token
     JWT_ENCRYPTION_TOKEN = local.jwt_encryption_token
 
     SERVICE_TOKEN = var.env_service_token
@@ -100,8 +100,8 @@ resource "kubernetes_secret" "wt-secret-email" {
   type = "Opaque"
 
   data = {
-    SECRET_KEY_BASE      = var.env_secret_key_base
-    SECRET_TOKEN         = var.env_secret_token
+    SECRET_KEY_BASE      = local.secret_key_base
+    SECRET_TOKEN         = local.secret_token
     JWT_ENCRYPTION_TOKEN = local.jwt_encryption_token
 
     SERVICE_TOKEN = var.env_service_token
@@ -119,7 +119,7 @@ resource "kubernetes_secret" "wt-secret-frontend" {
   type = "Opaque"
 
   data = {
-    SESSION_SECRET       = var.env_secret_key_base
+    SESSION_SECRET       = local.secret_key_base
     JWT_ENCRYPTION_TOKEN = local.jwt_encryption_token
 
     EMAIL_SERVICE_URL = var.env_email_service_url
@@ -137,8 +137,8 @@ resource "kubernetes_secret" "wt-secret-token" {
   type = "Opaque"
 
   data = {
-    SECRET_KEY_BASE      = var.env_secret_key_base
-    SECRET_TOKEN         = var.env_secret_token
+    SECRET_KEY_BASE      = local.secret_key_base
+    SECRET_TOKEN         = local.secret_token
     JWT_ENCRYPTION_TOKEN = local.jwt_encryption_token
 
     SERVICE_TOKEN = var.env_service_token
