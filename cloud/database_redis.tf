@@ -1,4 +1,10 @@
+locals {
+  redis_enabled = var.env_redis_address == null ? 1 : 0
+}
+
 resource "digitalocean_database_cluster" "redis" {
+  count = local.redis_enabled
+
   name            = "redis-${var.organization}-${var.cluster_env}-${var.cluster_version}"
   engine          = "redis"
   version         = "6"
@@ -19,7 +25,9 @@ resource "digitalocean_database_cluster" "redis" {
 }
 
 resource "digitalocean_database_firewall" "redis" {
-  cluster_id = digitalocean_database_cluster.redis.id
+  count = local.redis_enabled
+
+  cluster_id = one(digitalocean_database_cluster.redis[*].id)
 
   depends_on = [
     digitalocean_kubernetes_cluster.k8s-ams3-ontola-apex-1

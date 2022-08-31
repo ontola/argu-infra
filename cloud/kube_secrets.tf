@@ -1,13 +1,13 @@
 locals {
-  postgresql_address  = coalesce(var.env_postgresql_address, digitalocean_database_cluster.postgres.private_host)
-  postgresql_port     = coalesce(var.env_postgresql_port, digitalocean_database_cluster.postgres.port)
-  postgresql_username = coalesce(var.env_postgresql_username, digitalocean_database_cluster.postgres.user)
-  postgresql_password = coalesce(var.env_postgresql_password, digitalocean_database_cluster.postgres.password)
+  postgresql_address  = coalesce(var.env_postgresql_address, one(digitalocean_database_cluster.postgres[*].private_host))
+  postgresql_port     = coalesce(var.env_postgresql_port, one(digitalocean_database_cluster.postgres[*].port))
+  postgresql_username = coalesce(var.env_postgresql_username, one(digitalocean_database_cluster.postgres[*].user))
+  postgresql_password = coalesce(var.env_postgresql_password, one(digitalocean_database_cluster.postgres[*].password))
 
-  redis_address  = coalesce(var.env_redis_address, digitalocean_database_cluster.redis.private_host)
-  redis_port     = coalesce(var.env_redis_port, digitalocean_database_cluster.redis.port)
-  redis_username = coalesce(var.env_redis_username, digitalocean_database_cluster.redis.user)
-  redis_password = coalesce(var.env_redis_password, digitalocean_database_cluster.redis.password)
+  redis_address  = coalesce(var.env_redis_address, one(digitalocean_database_cluster.redis[*].private_host))
+  redis_port     = coalesce(var.env_redis_port, one(digitalocean_database_cluster.redis[*].port))
+  redis_username = coalesce(var.env_redis_username, one(digitalocean_database_cluster.redis[*].user))
+  redis_password = coalesce(var.env_redis_password, one(digitalocean_database_cluster.redis[*].password))
 }
 
 # Databases
@@ -75,7 +75,7 @@ resource "kubernetes_secret" "wt-secret-apex" {
     SECRET_TOKEN         = var.env_secret_token
     JWT_ENCRYPTION_TOKEN = local.jwt_encryption_token
 
-    SERVICE_TOKEN    = var.env_service_token
+    SERVICE_TOKEN = var.env_service_token
 
     BUGSNAG_KEY           = var.env_apex_bugsnag_key
     DEVISE_SECRET         = var.env_apex_devise_secret
@@ -104,7 +104,7 @@ resource "kubernetes_secret" "wt-secret-email" {
     SECRET_TOKEN         = var.env_secret_token
     JWT_ENCRYPTION_TOKEN = local.jwt_encryption_token
 
-    SERVICE_TOKEN    = var.env_service_token
+    SERVICE_TOKEN = var.env_service_token
 
     BUGSNAG_KEY    = var.env_email_bugsnag_key
     MAILJET_KEY    = var.env_email_mailjet_key
@@ -125,8 +125,8 @@ resource "kubernetes_secret" "wt-secret-frontend" {
     EMAIL_SERVICE_URL = var.env_email_service_url
     TOKEN_SERVICE_URL = var.env_token_service_url
 
-    MAPBOX_USERNAME     = var.env_frontend_mapbox_username
-    MAPBOX_KEY          = var.env_frontend_mapbox_key
+    MAPBOX_USERNAME = var.env_frontend_mapbox_username
+    MAPBOX_KEY      = var.env_frontend_mapbox_key
   }
 }
 
@@ -141,7 +141,7 @@ resource "kubernetes_secret" "wt-secret-token" {
     SECRET_TOKEN         = var.env_secret_token
     JWT_ENCRYPTION_TOKEN = local.jwt_encryption_token
 
-    SERVICE_TOKEN    = var.env_service_token
+    SERVICE_TOKEN = var.env_service_token
 
     BUGSNAG_KEY = var.env_token_bugsnag_key
   }

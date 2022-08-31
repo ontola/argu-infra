@@ -1,4 +1,14 @@
+locals {
+  postgres_enabled = var.env_postgresql_address == null ? 1 : 0
+
+  db_apex_name  = coalesce(var.env_apex_postgresql_database, one(digitalocean_database_db.apex[*].name))
+  db_email_name = coalesce(var.env_email_postgresql_database, one(digitalocean_database_db.email[*].name))
+  db_token_name = coalesce(var.env_token_postgresql_database, one(digitalocean_database_db.token[*].name))
+}
+
 resource "digitalocean_database_cluster" "postgres" {
+  count = local.postgres_enabled
+
   name       = "postgresql-${var.organization}-${var.cluster_env}-${var.cluster_version}"
   engine     = "pg"
   version    = "14"
@@ -19,12 +29,16 @@ resource "digitalocean_database_cluster" "postgres" {
 
 // Required by rails to function properly
 resource "digitalocean_database_db" "postgres" {
-  cluster_id = digitalocean_database_cluster.postgres.id
+  count = local.postgres_enabled
+
+  cluster_id = one(digitalocean_database_cluster.postgres[*].id)
   name       = "postgres"
 }
 
 resource "digitalocean_database_firewall" "postgres" {
-  cluster_id = digitalocean_database_cluster.postgres.id
+  count = local.postgres_enabled
+
+  cluster_id = one(digitalocean_database_cluster.postgres[*].id)
 
   depends_on = [
     digitalocean_kubernetes_cluster.k8s-ams3-ontola-apex-1
@@ -42,16 +56,22 @@ resource "digitalocean_database_firewall" "postgres" {
 }
 
 resource "digitalocean_database_db" "apex" {
-  cluster_id = digitalocean_database_cluster.postgres.id
+  count = local.postgres_enabled
+
+  cluster_id = one(digitalocean_database_cluster.postgres[*].id)
   name       = "apex_${var.cluster_env}"
 }
 
 resource "digitalocean_database_db" "email" {
-  cluster_id = digitalocean_database_cluster.postgres.id
+  count = local.postgres_enabled
+
+  cluster_id = one(digitalocean_database_cluster.postgres[*].id)
   name       = "email_${var.cluster_env}"
 }
 
 resource "digitalocean_database_db" "token" {
-  cluster_id = digitalocean_database_cluster.postgres.id
+  count = local.postgres_enabled
+
+  cluster_id = one(digitalocean_database_cluster.postgres[*].id)
   name       = "token_${var.cluster_env}"
 }
