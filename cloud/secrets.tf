@@ -5,16 +5,26 @@ locals {
 }
 
 resource "random_password" "jwt-encryption-token" {
-  length  = 64
+  length  = 128
   special = false
 }
 
 resource "random_password" "secret-token" {
-  length  = 64
+  length  = 128
   special = false
 }
 
 resource "random_password" "secret-key-base" {
-  length  = 64
+  length  = 128
+  special = false
+}
+
+resource "random_password" "devise-secret" {
+  length  = 128
+  special = false
+}
+
+resource "random_password" "devise-pepper" {
+  length  = 128
   special = false
 }
