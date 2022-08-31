@@ -1,6 +1,6 @@
 
-resource "kubernetes_deployment" "service-deployments" {
-  for_each = var.services
+resource "kubernetes_stateful_set" "service-deployments" {
+  for_each = var.stateful_sets
 
   metadata {
     name = "${each.key}-dep"
@@ -37,10 +37,22 @@ resource "kubernetes_deployment" "service-deployments" {
           name = kubernetes_secret.container-registry-secret.metadata[0].name
         }
 
+        dynamic "volume" {
+          for_each = coalesce(each.value.volumes, {})
+
+          content {
+            name = "volume-${each.key}-${volume.key}"
+
+            persistent_volume_claim {
+              claim_name = kubernetes_persistent_volume_claim.wt-volume-claim-matomo-html.metadata[0].name
+            }
+          }
+        }
+
         container {
-          name    = each.key
-          image   = coalesce(each.value.override_image, "${var.image_registry}/${var.image_registry_org}/${coalesce(each.value.image_name, "-")}:${try(var.service_image_tag[each.key], var.image_tag)}")
-          command = each.value.command
+          name  = each.key
+          image = each.value.image
+
           port {
             container_port = each.value.container_port
           }
@@ -75,14 +87,24 @@ resource "kubernetes_deployment" "service-deployments" {
               }
             }
           }
+
+          dynamic "volume_mount" {
+            for_each = coalesce(each.value.volumes, {})
+
+            content {
+              name       = "volume-${each.key}-${volume_mount.key}"
+              mount_path = volume_mount.value
+            }
+          }
         }
       }
     }
+    service_name = ""
   }
 }
 
-resource "kubernetes_service" "service-services" {
-  for_each = var.services
+resource "kubernetes_service" "stateful-set-services" {
+  for_each = var.stateful_sets
 
   metadata {
     name = each.value.service_name

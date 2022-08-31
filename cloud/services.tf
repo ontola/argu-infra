@@ -11,7 +11,6 @@ variable "services" {
     replicas       = number
     scrape         = bool
     databases      = optional(list(string))
-    volumes        = optional(map(string))
   }))
 
   default = {
@@ -66,21 +65,6 @@ variable "services" {
         "postgresql",
         "redis",
       ]
-    }
-    matomo = {
-      service_name   = "matomo"
-      override_image = "matomo:3-apache"
-      container_port = 80
-      migrate        = false
-      port           = 80
-      replicas       = 1
-      scrape         = false
-      databases = [
-        "mysql",
-      ]
-      volumes = {
-        "html" = "/var/www/html"
-      }
     }
   }
 }
