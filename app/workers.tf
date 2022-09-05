@@ -1,19 +1,19 @@
 variable "workers" {
   description = "Map of kubernetes workers."
   type = list(object({
-    service    = string
-    image_name = string
-    component  = string
-    command    = list(string)
-    databases  = list(string)
+    service   = string
+    image     = string
+    component = string
+    command   = list(string)
+    databases = list(string)
   }))
 
   default = [
     {
-      service    = "apex"
-      component  = "worker"
-      image_name = "apex"
-      command    = ["bundle", "exec", "sidekiq"]
+      service   = "apex"
+      component = "worker"
+      image     = "registry.gitlab.com/ontola/apex"
+      command   = ["bundle", "exec", "sidekiq"]
       databases = [
         "elasticsearch",
         "postgresql",
@@ -21,10 +21,10 @@ variable "workers" {
       ]
     },
     {
-      service    = "token"
-      component  = "worker"
-      image_name = "token_service"
-      command    = ["bundle", "exec", "sidekiq"]
+      service   = "token"
+      component = "worker"
+      image     = "registry.gitlab.com/ontola/token_service"
+      command   = ["bundle", "exec", "sidekiq"]
       databases = [
         "postgresql",
         "redis",
@@ -37,7 +37,8 @@ resource "kubernetes_deployment" "worker-deployments" {
   for_each = { for worker in var.workers : "${worker.service}-${worker.component}" => worker }
 
   metadata {
-    name = "${each.key}-dep"
+    name      = "${each.key}-dep"
+    namespace = kubernetes_namespace.this.metadata[0].name
     annotations = {
       "service-name" : each.value.service
       "reloader.stakater.com/auto" : "true"
@@ -70,27 +71,27 @@ resource "kubernetes_deployment" "worker-deployments" {
         }
         container {
           name    = each.key
-          image   = "${var.image_registry}/${var.image_registry_org}/${each.value.image_name}:${try(var.service_image_tag[each.value.service], var.image_tag)}"
+          image   = "${each.value.image}:${try(var.service_image_tag[each.value.service], var.image_tag)}"
           command = each.value.command
 
           env_from {
             config_map_ref {
-              name = "wt-configmap-statics"
+              name = "configmap-statics"
             }
           }
           env_from {
             config_map_ref {
-              name = "wt-configmap-env"
+              name = "configmap-env"
             }
           }
           env_from {
             config_map_ref {
-              name = "wt-configmap-${each.value.service}"
+              name = "configmap-${each.value.service}"
             }
           }
           env_from {
             secret_ref {
-              name = "wt-secret-${each.value.service}"
+              name = "secret-${each.value.service}"
             }
           }
 
@@ -99,7 +100,7 @@ resource "kubernetes_deployment" "worker-deployments" {
 
             content {
               secret_ref {
-                name = "wt-secret-db-${env_from.value}"
+                name = "secret-db-${env_from.value}"
               }
             }
           }

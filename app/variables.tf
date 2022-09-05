@@ -1,41 +1,16 @@
-variable "do_region" {
-  type    = string
-  default = "ams3"
+locals {
+  data_provider_service = "apex"
 }
 
-variable "do_token" {
+# Jobs
+
+variable "cache_trigger" {
   type        = string
-  description = "Used to manage the cluster and networking infrastructure"
-  sensitive   = true
+  default     = "0"
+  description = "Increment to trigger the cache clear job"
 }
 
-variable "env_service_do_access_id" {
-  type = string
-}
-
-variable "env_service_do_access_secret" {
-  type      = string
-  sensitive = true
-}
-
-variable "env_service_do_space_bucket" {
-  type = string
-}
-
-variable "env_service_do_space_endpoint" {
-  type = string
-}
-
-variable "organization" {
-  type    = string
-  default = "ontola"
-}
-
-variable "cluster_version" {
-  type        = number
-  default     = 0
-  description = "Increment to create a new cluster"
-}
+# Infrastructure
 
 variable "cluster_env" {
   type        = string
@@ -65,16 +40,29 @@ variable "analytics_subdomain" {
   default = "analytics"
 }
 
-variable "managed_domains" {
-  type        = list(string)
-  description = "Domains owned by us, registered manually, managed via terraform."
-  default     = []
-}
-
 variable "custom_simple_domains" {
   type        = list(string)
-  description = "Domains managed by customers, might contain misconfigurations like missing subdomains or wrong A records"
   default     = []
+  description = "Domains managed by customers, might contain misconfigurations like missing subdomains or wrong A records"
+}
+
+variable "all_domains" {
+  type = list(any)
+}
+
+variable "analytics_domains" {
+  type    = list(any)
+  default = []
+}
+
+variable "studio_domain" {
+  type    = string
+  default = null
+}
+
+variable "used_issuer" {
+  type    = string
+  default = null
 }
 
 variable "aws_region" {
@@ -82,29 +70,14 @@ variable "aws_region" {
   default = "eu-central-1"
 }
 
-variable "letsencrypt_email" {
-  type = string
-}
-
-variable "letsencrypt_env_production" {
-  type    = bool
-  default = false
-}
-
-variable "letsencrypt_issuers" {
-  type    = bool
-  default = true
-}
-
-variable "support_namespace_postfix" {
+variable "app_namespace" {
   type        = string
-  default     = "support"
-  description = "Namespace postfix to install supporting services into"
+  default     = "default"
+  description = "The kubernetes namespace to run the app in"
 }
 
 variable "application_name" {
-  type    = string
-  default = "argu"
+  type = string
 }
 
 variable "enable_prometheus" {
@@ -121,11 +94,6 @@ variable "enable_mailcatcher" {
 variable "image_registry" {
   type    = string
   default = "registry.gitlab.com"
-}
-
-variable "image_registry_org" {
-  type    = string
-  default = "ontola"
 }
 
 variable "image_registry_user" {
@@ -338,8 +306,7 @@ variable "env_redis_ssl" {
 ### Env - Databases - Elasticsearch
 
 variable "env_elasticsearch_url" {
-  type    = string
-  default = "http://elasticsearch-elasticsearch-coordinating-only.default.svc.cluster.local:9200"
+  type = string
 }
 
 ### Env - Secrets
@@ -379,6 +346,23 @@ variable "env_service_aws_key" {
 }
 
 variable "env_service_aws_bucket" {
+  type = string
+}
+
+variable "env_storage_id" {
+  type = string
+}
+
+variable "env_storage_secret" {
+  type      = string
+  sensitive = true
+}
+
+variable "env_storage_bucket" {
+  type = string
+}
+
+variable "env_storage_endpoint" {
   type = string
 }
 
@@ -481,28 +465,8 @@ variable "env_generic_matomo_general_salt" {
   sensitive = true
 }
 
-# Versions
-
-variable "ver_chart_cert_manager" {
-  description = "https://github.com/jetstack/cert-manager/releases"
-  type        = string
-}
-variable "ver_chart_elasticsearch" { type = string }
-variable "ver_chart_grafana" { type = string }
-variable "ver_chart_nginx_ingress" {
-  description = "https://github.com/kubernetes/ingress-nginx/blob/master/charts/ingress-nginx/CHANGELOG.md"
-  type        = string
-}
-variable "ver_chart_prometheus" {
-  description = <<-EOT
-  https://github.com/bitnami/charts/tree/master/bitnami/kube-prometheus/
-  https://github.com/bitnami/charts/tree/master/bitnami/kube-prometheus/#upgrading
-  EOT
-  type        = string
-}
-
 # Locals
 
 locals {
-  app_domain_base = "${module.app.namespace}.svc.cluster.local"
+  app_domain_base = "${kubernetes_namespace.this.metadata[0].name}.svc.cluster.local"
 }

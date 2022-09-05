@@ -1,11 +1,17 @@
 locals {
+  default_prefix = var.cluster_env == "production" ? "" : "${var.cluster_env}."
+  domain_prefix  = coalesce(var.env_domain_prefix, local.default_prefix)
+
   # The base domain and the prefix, eg staging.argu.co
   full_base_domain = join("", [var.env_domain_prefix, var.base_domain])
 
   # Map of zone names to prefixed names
-  domains = (var.cluster_env != "staging"
-    ? { for domain in var.managed_domains : domain => domain }
-    : { for domain in var.managed_domains : domain => "${var.env_domain_prefix}${domain}" }
+  domains = merge(
+    { (local.full_base_domain) : local.full_base_domain },
+    (var.cluster_env != "staging"
+      ? { for domain in var.managed_domains : domain => domain }
+      : { for domain in var.managed_domains : domain => "${var.env_domain_prefix}${domain}" }
+    )
   )
 }
 

@@ -3,10 +3,11 @@ locals {
 }
 
 resource "kubernetes_deployment" "deployment-mailcatcher" {
-  count = var.cluster_env != "production" ? 1 : 0
+  count = var.enable_mailcatcher ? 1 : 0
 
   metadata {
-    name = "mailcatcher-dep"
+    name      = "mailcatcher-dep"
+    namespace = kubernetes_namespace.this.metadata[0].name
     annotations = {
       "service-name" : "mailcatcher"
       "reloader.stakater.com/auto" : "true"

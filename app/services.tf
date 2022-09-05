@@ -2,21 +2,20 @@ variable "services" {
   description = "Map of kubernetes services."
   type = map(object({
     service_name   = string
-    override_image = optional(string)
-    image_name     = optional(string)
+    image          = optional(string)
     command        = optional(list(string))
     container_port = number
     migrate        = bool
     port           = number
     replicas       = number
     scrape         = bool
-    databases      = optional(list(string))
+    databases      = list(string)
   }))
 
   default = {
     apex = {
       service_name   = "apex"
-      image_name     = "apex"
+      image          = "registry.gitlab.com/ontola/apex"
       container_port = 3000
       migrate        = true
       port           = 3000
@@ -30,7 +29,7 @@ variable "services" {
     }
     frontend = {
       service_name   = "frontend"
-      image_name     = "argu/libro"
+      image          = "argu/libro"
       container_port = 3080
       migrate        = false
       port           = 80
@@ -42,7 +41,7 @@ variable "services" {
     }
     email = {
       service_name   = "email"
-      image_name     = "email_service"
+      image          = "registry.gitlab.com/ontola/email_service"
       container_port = 3000
       migrate        = true
       port           = 3000
@@ -55,7 +54,7 @@ variable "services" {
     }
     token = {
       service_name   = "token"
-      image_name     = "token_service"
+      image          = "registry.gitlab.com/ontola/token_service"
       container_port = 3000
       migrate        = true
       port           = 3000

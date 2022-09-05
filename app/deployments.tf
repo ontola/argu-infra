@@ -3,7 +3,8 @@ resource "kubernetes_deployment" "service-deployments" {
   for_each = var.services
 
   metadata {
-    name = "${each.key}-dep"
+    name      = "${each.key}-dep"
+    namespace = kubernetes_namespace.this.metadata[0].name
     annotations = {
       "service-name" : each.key
       "reloader.stakater.com/auto" : "true"
@@ -39,7 +40,7 @@ resource "kubernetes_deployment" "service-deployments" {
 
         container {
           name    = each.key
-          image   = coalesce(each.value.override_image, "${var.image_registry}/${var.image_registry_org}/${coalesce(each.value.image_name, "-")}:${try(var.service_image_tag[each.key], var.image_tag)}")
+          image   = "${each.value.image}:${try(var.service_image_tag[each.key], var.image_tag)}"
           command = each.value.command
           port {
             container_port = each.value.container_port
@@ -47,22 +48,22 @@ resource "kubernetes_deployment" "service-deployments" {
 
           env_from {
             config_map_ref {
-              name = "wt-configmap-statics"
+              name = "configmap-statics"
             }
           }
           env_from {
             config_map_ref {
-              name = "wt-configmap-env"
+              name = "configmap-env"
             }
           }
           env_from {
             config_map_ref {
-              name = "wt-configmap-${each.key}"
+              name = "configmap-${each.key}"
             }
           }
           env_from {
             secret_ref {
-              name = "wt-secret-${each.key}"
+              name = "secret-${each.key}"
             }
           }
 
@@ -71,7 +72,7 @@ resource "kubernetes_deployment" "service-deployments" {
 
             content {
               secret_ref {
-                name = "wt-secret-db-${env_from.value}"
+                name = "secret-db-${env_from.value}"
               }
             }
           }
@@ -85,7 +86,8 @@ resource "kubernetes_service" "service-services" {
   for_each = var.services
 
   metadata {
-    name = each.value.service_name
+    name      = each.value.service_name
+    namespace = kubernetes_namespace.this.metadata[0].name
     annotations = {
       "service-name" = each.key
     }

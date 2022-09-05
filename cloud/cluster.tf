@@ -10,7 +10,7 @@ locals {
     "text/turtle",
   ]
 
-  cluster_name = var.cluster_env != "staging" ? "k8s-${var.do_region}-${var.organization}-${var.cluster_env}-${var.cluster_version}" : "k8s-ams3-ontola-2"
+  cluster_name = var.cluster_env != "staging" ? "${var.application_name}-${var.cluster_env}-${var.do_region}-${var.cluster_version}" : "k8s-ams3-ontola-2"
 
   prometheus_name = (
     var.enable_prometheus
@@ -61,15 +61,9 @@ resource "digitalocean_ssh_key" "this" {
   public_key = tls_private_key.this.public_key_openssh
 }
 
-resource "kubernetes_secret" "container-registry-secret" {
+resource "kubernetes_namespace" "support" {
   metadata {
-    name = "container-registry-secret"
-  }
-
-  type = "kubernetes.io/dockerconfigjson"
-
-  data = {
-    ".dockerconfigjson" = "{\"auths\":{\"${var.image_registry}\":{\"username\":\"${var.image_registry_user}\",\"password\":\"${var.image_registry_token}\",\"auth\":\"${base64encode("${var.image_registry_user}:${var.image_registry_token}")}\"}}}"
+    name = "${var.cluster_env}-${var.support_namespace_postfix}"
   }
 }
 
@@ -99,11 +93,7 @@ resource "helm_release" "nginx-ingress" {
   }
   set {
     name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/do-loadbalancer-healthcheck-path"
-    value = kubernetes_deployment.default-http-backend.spec[0].template[0].spec[0].container[0].liveness_probe[0].http_get[0].path
-  }
-  set {
-    name  = "controller.config.add-headers"
-    value = "${kubernetes_config_map.custom-headers.metadata[0].namespace}/${kubernetes_config_map.custom-headers.metadata[0].name}"
+    value = module.app.health_check_path
   }
   set {
     name  = "controller.config.brotli-types"
@@ -159,6 +149,7 @@ resource "helm_release" "cert-manager" {
   repository  = "https://charts.jetstack.io"
   chart       = "cert-manager"
   name        = "cert-manager"
+  namespace   = kubernetes_namespace.cert-manager.metadata[0].name
   version     = var.ver_chart_cert_manager
 
   set {
@@ -171,9 +162,14 @@ resource "helm_release" "elasticsearch" {
   repository = "https://charts.bitnami.com/bitnami"
   chart      = "elasticsearch"
   name       = "elasticsearch"
+  namespace  = kubernetes_namespace.support.metadata[0].name
   version    = var.ver_chart_elasticsearch
 
   cleanup_on_fail = true
+}
+
+locals {
+  elastic_url = "http://elasticsearch-elasticsearch-coordinating-only.${kubernetes_namespace.support.metadata[0].name}.svc.cluster.local:9200"
 }
 
 resource "kubernetes_secret" "prometheus-config" {
@@ -195,6 +191,7 @@ resource "helm_release" "prometheus" {
   repository = "https://charts.bitnami.com/bitnami"
   chart      = "kube-prometheus"
   name       = "prometheus"
+  namespace  = kubernetes_namespace.support.metadata[0].name
   version    = var.ver_chart_prometheus
 
   atomic          = true
@@ -231,6 +228,7 @@ resource "helm_release" "grafana" {
   repository = "https://charts.bitnami.com/bitnami"
   chart      = "grafana"
   name       = "grafana"
+  namespace  = kubernetes_namespace.support.metadata[0].name
   version    = var.ver_chart_grafana
 
   atomic          = true
@@ -241,6 +239,7 @@ resource "helm_release" "configmap-reloader" {
   repository = "https://stakater.github.io/stakater-charts"
   chart      = "reloader"
   name       = "reloader"
+  namespace  = kubernetes_namespace.support.metadata[0].name
 
   atomic          = true
   cleanup_on_fail = true

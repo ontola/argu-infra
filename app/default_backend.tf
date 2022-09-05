@@ -1,7 +1,8 @@
 
 resource "kubernetes_deployment" "default-http-backend" {
   metadata {
-    name = "default-http-backend"
+    name      = "default-http-backend"
+    namespace = kubernetes_namespace.this.metadata[0].name
     labels = {
       k8s-app = "default-http-backend"
     }
@@ -58,7 +59,8 @@ resource "kubernetes_deployment" "default-http-backend" {
 
 resource "kubernetes_service" "default-http-backend" {
   metadata {
-    name = "default-http-backend"
+    name      = "default-http-backend"
+    namespace = kubernetes_namespace.this.metadata[0].name
     labels = {
       k8s-app = "default-http-backend"
     }
@@ -74,4 +76,8 @@ resource "kubernetes_service" "default-http-backend" {
       k8s-app = "default-http-backend"
     }
   }
+}
+
+output "health_check_path" {
+  value = kubernetes_deployment.default-http-backend.spec[0].template[0].spec[0].container[0].liveness_probe[0].http_get[0].path
 }

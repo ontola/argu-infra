@@ -1,6 +1,11 @@
-resource "kubernetes_config_map" "wt-configmap-statics" {
+locals {
+  full_base_domain = join("", [var.env_domain_prefix, var.base_domain])
+}
+
+resource "kubernetes_config_map" "configmap-statics" {
   metadata {
-    name = "wt-configmap-statics"
+    name      = "configmap-statics"
+    namespace = kubernetes_namespace.this.metadata[0].name
   }
 
   data = {
@@ -14,28 +19,30 @@ resource "kubernetes_config_map" "wt-configmap-statics" {
   }
 }
 
-resource "kubernetes_config_map" "wt-configmap-env" {
+resource "kubernetes_config_map" "configmap-env" {
   metadata {
-    name = "wt-configmap-env"
+    name      = "configmap-env"
+    namespace = kubernetes_namespace.this.metadata[0].name
   }
 
   data = {
     RAILS_ENV             = var.env_rails_env
     LOG_LEVEL             = var.env_generic_log_level
     HOSTNAME              = join("", [var.env_domain_prefix, var.base_domain])
-    SERVICE_DNS_PREFIX    = join(".", [var.app_namespace, "svc"])
+    SERVICE_DNS_PREFIX    = join(".", [kubernetes_namespace.this.metadata[0].name, "svc"])
     DATA_SERVICE_NAME     = kubernetes_service.service-services[local.data_provider_service].metadata[0].name
     FRONTEND_SERVICE_PORT = var.services.frontend.port
   }
 }
 
-resource "kubernetes_config_map" "wt-configmap-apex" {
+resource "kubernetes_config_map" "configmap-apex" {
   metadata {
-    name = "wt-configmap-apex"
+    name      = "configmap-apex"
+    namespace = kubernetes_namespace.this.metadata[0].name
   }
 
   data = {
-    POSTGRESQL_DATABASE : coalesce(var.env_apex_postgresql_database, local.db_apex_name)
+    POSTGRESQL_DATABASE : var.env_apex_postgresql_database
     RAILS_MAX_THREADS : "15"
     INT_IP_WHITELIST : "10.244.0.0/16"
     AWS_REGION : var.aws_region
@@ -43,46 +50,51 @@ resource "kubernetes_config_map" "wt-configmap-apex" {
   }
 }
 
-resource "kubernetes_config_map" "wt-configmap-email" {
+resource "kubernetes_config_map" "configmap-email" {
   metadata {
-    name = "wt-configmap-email"
+    name      = "configmap-email"
+    namespace = kubernetes_namespace.this.metadata[0].name
   }
 
   data = {
     MAIL_ADDRESS : var.enable_mailcatcher == true ? "${kubernetes_service.service-mailcatcher[0].metadata[0].name}.${local.app_domain_base}" : var.env_generic_email_mail_address
     MAIL_PORT : var.enable_mailcatcher == true ? kubernetes_service.service-mailcatcher[0].spec[0].port[1].port : var.env_generic_email_mail_port
-    EMAIL_SERVICE_DATABASE : coalesce(var.env_email_postgresql_database, local.db_email_name)
+    EMAIL_SERVICE_DATABASE : var.env_email_postgresql_database
     INT_IP_WHITELIST : "10.244.0.0/16"
     LOG_LEVEL : coalesce(var.env_generic_email_log_level, var.env_generic_log_level)
   }
 }
 
-resource "kubernetes_config_map" "wt-configmap-token" {
+resource "kubernetes_config_map" "configmap-token" {
   metadata {
-    name = "wt-configmap-token"
+    name      = "configmap-token"
+    namespace = kubernetes_namespace.this.metadata[0].name
   }
 
   data = {
-    TOKEN_SERVICE_DATABASE : coalesce(var.env_token_postgresql_database, local.db_token_name)
+    TOKEN_SERVICE_DATABASE : var.env_token_postgresql_database
     INT_IP_WHITELIST : "10.244.0.0/16"
   }
 }
 
-resource "kubernetes_config_map" "wt-configmap-frontend" {
+resource "kubernetes_config_map" "configmap-frontend" {
   metadata {
-    name = "wt-configmap-frontend"
+    name      = "configmap-frontend"
+    namespace = kubernetes_namespace.this.metadata[0].name
   }
 
   data = {
+    KTOR_ENV             = "production"
     SERVER_REPORTING_KEY = var.env_frontend_server_bugsnag_key
     CLIENT_REPORTING_KEY = var.env_frontend_client_bugsnag_key
     STUDIO_DOMAIN        = local.studio_domain
   }
 }
 
-resource "kubernetes_config_map" "wt-configmap-matomo" {
+resource "kubernetes_config_map" "configmap-matomo" {
   metadata {
-    name = "wt-configmap-matomo"
+    name      = "configmap-matomo"
+    namespace = kubernetes_namespace.this.metadata[0].name
   }
 
   data = {

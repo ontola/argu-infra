@@ -1,5 +1,5 @@
 
 variable "do_token" {
-  type = string
+  type        = string
   description = "Used to manage the cluster and networking infrastructure"
 }

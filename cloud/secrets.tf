@@ -1,30 +1,11 @@
 locals {
-  jwt_encryption_token = coalesce(var.env_jwt_encryption_token, random_password.jwt-encryption-token.result)
-  secret_token         = coalesce(var.env_secret_token, random_password.secret-token.result)
-  secret_key_base      = coalesce(var.env_secret_key_base, random_password.secret-key-base.result)
-}
+  postgresql_address  = coalesce(var.env_postgresql_address, one(digitalocean_database_cluster.postgres[*].private_host))
+  postgresql_port     = coalesce(var.env_postgresql_port, one(digitalocean_database_cluster.postgres[*].port))
+  postgresql_username = coalesce(var.env_postgresql_username, one(digitalocean_database_cluster.postgres[*].user))
+  postgresql_password = coalesce(var.env_postgresql_password, one(digitalocean_database_cluster.postgres[*].password))
 
-resource "random_password" "jwt-encryption-token" {
-  length  = 128
-  special = false
-}
-
-resource "random_password" "secret-token" {
-  length  = 128
-  special = false
-}
-
-resource "random_password" "secret-key-base" {
-  length  = 128
-  special = false
-}
-
-resource "random_password" "devise-secret" {
-  length  = 128
-  special = false
-}
-
-resource "random_password" "devise-pepper" {
-  length  = 128
-  special = false
+  redis_address  = coalesce(var.env_redis_address, one(digitalocean_database_cluster.redis[*].private_host))
+  redis_port     = coalesce(var.env_redis_port, one(digitalocean_database_cluster.redis[*].port))
+  redis_username = coalesce(var.env_redis_username, one(digitalocean_database_cluster.redis[*].user))
+  redis_password = coalesce(var.env_redis_password, one(digitalocean_database_cluster.redis[*].password))
 }

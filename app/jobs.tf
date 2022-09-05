@@ -12,7 +12,8 @@ resource "kubernetes_job" "clear-cache" {
   wait_for_completion = true
 
   metadata {
-    name = "clear-cache-${random_pet.clear-cache-version.id}"
+    name      = "clear-cache-${random_pet.clear-cache-version.id}"
+    namespace = kubernetes_namespace.this.metadata[0].name
   }
 
   spec {
@@ -33,44 +34,44 @@ resource "kubernetes_job" "clear-cache" {
         }
         container {
           name    = "clear-cache-job"
-          image   = "${var.image_registry}/${var.image_registry_org}/${var.services.apex.image_name}:${try(var.service_image_tag[local.job_cache_clear_service], var.image_tag)}"
+          image   = "${var.services.apex.image}:${try(var.service_image_tag[local.job_cache_clear_service], var.image_tag)}"
           command = ["bundle", "exec", "rake", "cache:clear"]
 
 
           env_from {
             config_map_ref {
-              name = "wt-configmap-env"
+              name = "configmap-env"
             }
           }
 
           env_from {
             config_map_ref {
-              name = "wt-configmap-statics"
+              name = "configmap-statics"
             }
           }
           env_from {
             config_map_ref {
-              name = "wt-configmap-env"
+              name = "configmap-env"
             }
           }
           env_from {
             config_map_ref {
-              name = "wt-configmap-${local.job_cache_clear_service}"
+              name = "configmap-${local.job_cache_clear_service}"
             }
           }
           env_from {
             secret_ref {
-              name = "wt-secret-${local.job_cache_clear_service}"
+              name = "secret-${local.job_cache_clear_service}"
             }
           }
           env_from {
             secret_ref {
-              name = "wt-secret-db-redis"
+              name = "secret-db-redis"
             }
           }
           env_from {
             secret_ref {
-              name = "wt-secret-db-postgresql"
+              name = "secret-db-postgresql"
             }
           }
         }
@@ -90,7 +91,8 @@ resource "kubernetes_job" "migrate-jobs" {
   wait_for_completion = true
 
   metadata {
-    name = "migrate-${each.key}-${try(var.service_image_tag[each.key], var.image_tag)}"
+    name      = "migrate-${each.key}-${try(var.service_image_tag[each.key], var.image_tag)}"
+    namespace = kubernetes_namespace.this.metadata[0].name
   }
 
   spec {
@@ -108,28 +110,28 @@ resource "kubernetes_job" "migrate-jobs" {
       spec {
         container {
           name    = "migrate-${each.key}-job"
-          image   = coalesce(each.value.override_image, "${var.image_registry}/${var.image_registry_org}/${coalesce(each.value.image_name, "-")}:${try(var.service_image_tag[each.key], var.image_tag)}")
+          image   = "${each.value.image}:${try(var.service_image_tag[each.key], var.image_tag)}"
           command = ["bundle", "exec", "rake", "db:migrate"]
 
 
           env_from {
             config_map_ref {
-              name = "wt-configmap-statics"
+              name = "configmap-statics"
             }
           }
           env_from {
             config_map_ref {
-              name = "wt-configmap-env"
+              name = "configmap-env"
             }
           }
           env_from {
             config_map_ref {
-              name = "wt-configmap-${each.key}"
+              name = "configmap-${each.key}"
             }
           }
           env_from {
             secret_ref {
-              name = "wt-secret-${each.key}"
+              name = "secret-${each.key}"
             }
           }
           dynamic "env_from" {
@@ -137,7 +139,7 @@ resource "kubernetes_job" "migrate-jobs" {
 
             content {
               secret_ref {
-                name = "wt-secret-db-${env_from.value}"
+                name = "secret-db-${env_from.value}"
               }
             }
           }
