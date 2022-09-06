@@ -22,6 +22,8 @@ locals {
     var.custom_simple_domains,
     [local.studio_domain],
   ))
+
+  whitelist_source_range = var.ip_whitelist == null ? "0.0.0.0/0" : var.ip_whitelist
 }
 
 resource "kubernetes_ingress_v1" "default-ingress" {
@@ -43,7 +45,7 @@ resource "kubernetes_ingress_v1" "default-ingress" {
       "nginx.ingress.kubernetes.io/proxy-buffer-size" : "1024m"
       "nginx.ingress.kubernetes.io/proxy-max-temp-file-size" : "1024m"
       "nginx.ingress.kubernetes.io/server-alias" : join(",", local.website_domains)
-      "nginx.ingress.kubernetes.io/whitelist-source-range" : var.ip_whitelist
+      "nginx.ingress.kubernetes.io/whitelist-source-range" : local.whitelist_source_range
       "kubernetes.io/ingress.class" : "nginx"
     }
   }

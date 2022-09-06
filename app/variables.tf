@@ -20,7 +20,7 @@ variable "cluster_env" {
 
 variable "ip_whitelist" {
   type        = string
-  default     = "0.0.0.0/0"
+  default     = null
   description = "Range of allowed IP addresses"
 }
 

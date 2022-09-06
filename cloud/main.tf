@@ -78,7 +78,7 @@ module "app" {
   env_storage_endpoint = var.env_service_do_space_endpoint
 
   cluster_env                               = var.cluster_env
-  ip_whitelist                              = var.ip_whitelist
+  ip_whitelist                              = var.ip_whitelist == null ? null : join(",", [digitalocean_kubernetes_cluster.k8s-ams3-ontola-apex-1.ipv4_address, var.ip_whitelist])
   base_domain                               = var.base_domain
   env_domain_prefix                         = var.env_domain_prefix
   analytics_subdomain                       = var.analytics_subdomain
