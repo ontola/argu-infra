@@ -159,17 +159,27 @@ resource "helm_release" "cert-manager" {
 }
 
 resource "helm_release" "elasticsearch" {
-  repository = "https://charts.bitnami.com/bitnami"
-  chart      = "elasticsearch"
-  name       = "elasticsearch"
-  namespace  = kubernetes_namespace.support.metadata[0].name
-  version    = var.ver_chart_elasticsearch
+  description = "https://github.com/elastic/helm-charts/blob/main/CHANGELOG.md"
+  repository  = "https://helm.elastic.co"
+  chart       = "elasticsearch"
+  name        = "elasticsearch"
+  namespace   = kubernetes_namespace.support.metadata[0].name
+  version     = var.ver_chart_elasticsearch
 
   cleanup_on_fail = true
+
+  set {
+    name  = "replicas"
+    value = "1"
+  }
+  set {
+    name  = "volumeClaimTemplate.resources.requests.storage"
+    value = "8Gi"
+  }
 }
 
 locals {
-  elastic_url = "http://elasticsearch-elasticsearch-coordinating-only.${kubernetes_namespace.support.metadata[0].name}.svc.cluster.local:9200"
+  elastic_url = "http://elasticsearch-master.${kubernetes_namespace.support.metadata[0].name}.svc.cluster.local:9200"
 }
 
 resource "kubernetes_secret" "prometheus-config" {
