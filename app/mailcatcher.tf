@@ -55,6 +55,7 @@ resource "kubernetes_service" "service-mailcatcher" {
 
   metadata {
     name = "mailcatcher"
+    namespace = kubernetes_namespace.this.metadata[0].name
     annotations = {
       "service-name" = "mailcatcher"
     }
