@@ -92,6 +92,7 @@ module "app" {
   image_registry_token                      = var.image_registry_token
   image_tag                                 = var.image_tag
   service_image_tag                         = var.service_image_tag
+
   env_rails_env                             = var.env_rails_env
   env_generic_log_level                     = var.env_generic_log_level
   env_generic_email_log_level               = var.env_generic_email_log_level
@@ -127,7 +128,8 @@ module "app" {
   env_frontend_mapbox_key                   = var.env_frontend_mapbox_key
   env_token_bugsnag_key                     = var.env_token_bugsnag_key
   env_token_service_url                     = var.env_token_service_url
-  env_apex_postgresql_database              = var.env_apex_postgresql_database
-  env_email_postgresql_database             = var.env_email_postgresql_database
-  env_token_postgresql_database             = var.env_token_postgresql_database
+
+  apex_postgresql_database              = local.apex_postgresql_database
+  email_postgresql_database             = local.email_postgresql_database
+  token_postgresql_database             = local.token_postgresql_database
 }

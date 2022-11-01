@@ -42,7 +42,7 @@ resource "kubernetes_config_map" "configmap-apex" {
   }
 
   data = {
-    POSTGRESQL_DATABASE : var.env_apex_postgresql_database
+    POSTGRESQL_DATABASE : var.apex_postgresql_database
     RAILS_MAX_THREADS : "15"
     INT_IP_WHITELIST : "10.244.0.0/16"
     AWS_REGION : var.aws_region
@@ -59,7 +59,7 @@ resource "kubernetes_config_map" "configmap-email" {
   data = {
     MAIL_ADDRESS : var.enable_mailcatcher == true ? "${kubernetes_service.service-mailcatcher[0].metadata[0].name}.${local.app_domain_base}" : var.env_generic_email_mail_address
     MAIL_PORT : var.enable_mailcatcher == true ? kubernetes_service.service-mailcatcher[0].spec[0].port[1].port : var.env_generic_email_mail_port
-    EMAIL_SERVICE_DATABASE : var.env_email_postgresql_database
+    EMAIL_SERVICE_DATABASE : var.email_postgresql_database
     INT_IP_WHITELIST : "10.244.0.0/16"
     LOG_LEVEL : coalesce(var.env_generic_email_log_level, var.env_generic_log_level)
   }
@@ -72,7 +72,7 @@ resource "kubernetes_config_map" "configmap-token" {
   }
 
   data = {
-    TOKEN_SERVICE_DATABASE : var.env_token_postgresql_database
+    TOKEN_SERVICE_DATABASE : var.token_postgresql_database
     INT_IP_WHITELIST : "10.244.0.0/16"
   }
 }

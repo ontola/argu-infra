@@ -338,19 +338,16 @@ variable "env_token_service_url" {
 
 ## Other env - service specific
 
-variable "env_apex_postgresql_database" {
+variable "apex_postgresql_database" {
   type    = string
-  default = ""
 }
 
-variable "env_email_postgresql_database" {
+variable "email_postgresql_database" {
   type    = string
-  default = ""
 }
 
-variable "env_token_postgresql_database" {
+variable "token_postgresql_database" {
   type    = string
-  default = ""
 }
 
 # Locals
