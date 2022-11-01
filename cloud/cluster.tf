@@ -42,7 +42,7 @@ resource "digitalocean_kubernetes_cluster" "k8s-ams3-ontola-apex-1" {
   node_pool {
     name       = var.cluster_env != "staging" ? "pool-gp-${random_pet.node_pool.id}" : "pool-gp-curious-cougar"
     size       = "g-2vcpu-8gb"
-    node_count = 2
+    node_count = 1
     auto_scale = false
 
     tags = [
