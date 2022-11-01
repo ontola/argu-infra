@@ -24,18 +24,6 @@ resource "kubernetes_secret" "secret-db-postgresql" {
   }
 }
 
-resource "kubernetes_secret" "secret-db-mysql" {
-  metadata {
-    name      = "secret-db-mysql"
-    namespace = kubernetes_namespace.this.metadata[0].name
-  }
-
-  data = {
-    MYSQL_ADDRESS = var.env_mysql_address
-    MYSQL_URL     = "mysql://${var.env_mysql_admin_username}:${var.env_mysql_admin_password}@${var.env_mysql_address}:${var.env_mysql_port}"
-  }
-}
-
 resource "kubernetes_secret" "secret-db-redis" {
   metadata {
     name      = "secret-db-redis"
@@ -136,20 +124,6 @@ resource "kubernetes_secret" "secret-token" {
     SERVICE_TOKEN = var.env_service_token
 
     BUGSNAG_KEY = var.env_token_bugsnag_key
-  }
-}
-
-resource "kubernetes_secret" "secret-matomo" {
-  metadata {
-    name      = "secret-matomo"
-    namespace = kubernetes_namespace.this.metadata[0].name
-  }
-  type = "Opaque"
-
-  data = {
-    MATOMO_GENERAL_SALT         = var.env_generic_matomo_general_salt
-    MATOMO_MAIL_PASSWORD        = var.env_generic_matomo_mail_password
-    MATOMO_DATABASE_SSL_CA_PATH = var.env_generic_matomo_database_ca_path
   }
 }
 

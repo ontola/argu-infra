@@ -147,86 +147,6 @@ variable "env_generic_email_mail_port" {
   default = ""
 }
 
-### Env - Generic - Matomo
-
-variable "env_generic_matomo_database_adapter" {
-  type    = string
-  default = "PDO\\MYSQL"
-}
-
-variable "env_generic_matomo_database_ca_path" {
-  type    = string
-  default = "/var/www/html/config/ca-certificate.crt"
-}
-
-variable "env_generic_matomo_database_tables_prefix" {
-  type    = string
-  default = "matomo_"
-}
-
-variable "env_generic_matomo_noreply_address" {
-  type = string
-}
-
-variable "env_generic_matomo_noreply_name" {
-  type = string
-}
-
-variable "env_generic_matomo_host" {
-  type        = string
-  default     = null
-  description = "Defaults to analytics_domain.base_domain"
-}
-
-variable "env_generic_matomo_defaulthostnameifempty" {
-  type        = string
-  default     = null
-  description = "Defaults to mj.base_domain"
-}
-
-variable "env_generic_matomo_mail_encryption" {
-  type    = string
-  default = "tls"
-}
-
-variable "env_generic_matomo_mail_host" {
-  type = string
-}
-
-variable "env_generic_matomo_mail_password" {
-  type      = string
-  sensitive = true
-}
-
-variable "env_generic_matomo_mail_port" {
-  type    = string
-  default = "587"
-}
-
-variable "env_generic_matomo_mail_transport" {
-  type    = string
-  default = "smtp"
-}
-
-variable "env_generic_matomo_mail_type" {
-  type    = string
-  default = "PLAIN"
-}
-
-variable "env_generic_matomo_mail_username" {
-  type = string
-}
-
-variable "env_generic_matomo_force_ssl" {
-  type    = number
-  default = 1
-}
-
-variable "env_generic_matomo_database_enable_ssl" {
-  type    = number
-  default = 1
-}
-
 ## Env - Databases
 
 ### Env - Databases - Postgres
@@ -249,29 +169,6 @@ variable "env_postgresql_username" {
 variable "env_postgresql_password" {
   type      = string
   default   = null
-  sensitive = true
-}
-
-### Env - Databases - MySQL
-
-variable "env_mysql_address" {
-  type = string
-}
-
-variable "env_mysql_port" {
-  type = string
-}
-
-variable "env_mysql_database" {
-  type = string
-}
-
-variable "env_mysql_admin_username" {
-  type = string
-}
-
-variable "env_mysql_admin_password" {
-  type      = string
   sensitive = true
 }
 
@@ -454,15 +351,6 @@ variable "env_email_postgresql_database" {
 variable "env_token_postgresql_database" {
   type    = string
   default = ""
-}
-
-variable "env_matomo_mysql_database" {
-  type = string
-}
-
-variable "env_generic_matomo_general_salt" {
-  type      = string
-  sensitive = true
 }
 
 # Locals
