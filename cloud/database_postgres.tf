@@ -75,3 +75,16 @@ resource "digitalocean_database_db" "token" {
   cluster_id = one(digitalocean_database_cluster.postgres[*].id)
   name       = "token_${var.cluster_env}"
 }
+
+resource "random_pet" "pg-user-fallback" {
+  keepers = {
+    refresh : 1
+  }
+}
+
+resource "digitalocean_database_user" "postgres-app" {
+  count = local.postgres_enabled
+
+  cluster_id = one(digitalocean_database_cluster.postgres[*].id)
+  name       = local.postgresql_username
+}
