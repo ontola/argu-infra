@@ -113,10 +113,10 @@ module "app" {
   env_generic_matomo_mail_username          = var.env_generic_matomo_mail_username
   env_generic_matomo_force_ssl              = var.env_generic_matomo_force_ssl
   env_generic_matomo_database_enable_ssl    = var.env_generic_matomo_database_enable_ssl
-  env_postgresql_address                    = var.env_postgresql_address
-  env_postgresql_port                       = var.env_postgresql_port
-  env_postgresql_username                   = var.env_postgresql_username
-  env_postgresql_password                   = var.env_postgresql_password
+  env_postgresql_address                    = local.postgresql_address
+  env_postgresql_port                       = local.postgresql_port
+  env_postgresql_username                   = local.postgresql_username
+  env_postgresql_password                   = local.postgresql_password
   env_mysql_address                         = var.env_mysql_address
   env_mysql_port                            = var.env_mysql_port
   env_mysql_database                        = var.env_mysql_database
