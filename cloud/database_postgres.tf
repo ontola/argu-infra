@@ -1,9 +1,5 @@
 locals {
   postgres_enabled = var.env_postgresql_address == null ? 1 : 0
-
-  db_apex_name  = coalesce(var.env_apex_postgresql_database, one(digitalocean_database_db.apex[*].name))
-  db_email_name = coalesce(var.env_email_postgresql_database, one(digitalocean_database_db.email[*].name))
-  db_token_name = coalesce(var.env_token_postgresql_database, one(digitalocean_database_db.token[*].name))
 }
 
 resource "digitalocean_database_cluster" "postgres" {
