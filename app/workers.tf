@@ -13,7 +13,7 @@ variable "workers" {
       service   = "apex"
       component = "worker"
       image     = "registry.gitlab.com/ontola/apex"
-      command   = ["bundle", "exec", "sidekiq"]
+      command   = ["bundle", "exec", "sidekiq", "--concurrency=2"]
       databases = [
         "elasticsearch",
         "postgresql",
@@ -24,7 +24,7 @@ variable "workers" {
       service   = "token"
       component = "worker"
       image     = "registry.gitlab.com/ontola/token_service"
-      command   = ["bundle", "exec", "sidekiq"]
+      command   = ["bundle", "exec", "sidekiq", "--concurrency=2"]
       databases = [
         "postgresql",
         "redis",
