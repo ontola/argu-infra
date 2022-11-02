@@ -145,7 +145,7 @@ resource "helm_release" "nginx-ingress" {
 }
 
 resource "helm_release" "cert-manager" {
-  description = "https://artifacthub.io/packages/helm/jetstack/cert-manager"
+  description = "https://cert-manager.io/docs/release-notes/"
   repository  = "https://charts.jetstack.io"
   chart       = "cert-manager"
   name        = "cert-manager"
